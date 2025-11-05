@@ -67,21 +67,25 @@ export class Lesson {
 
   /**
    * Many-to-One relationship with Teacher
+   * Eager loaded by default for convenience
    */
   @ManyToOne(() => Teacher, (teacher: Teacher) => teacher.lessons, {
     onDelete: 'CASCADE',
+    eager: false,
   })
   @JoinColumn({ name: 'teacher_id' })
-  teacher!: Teacher;
+  teacher?: Teacher;
 
   /**
    * Many-to-One relationship with Student
+   * Eager loaded by default for convenience
    */
   @ManyToOne(() => Student, (student: Student) => student.lessons, {
     onDelete: 'CASCADE',
+    eager: false,
   })
   @JoinColumn({ name: 'student_id' })
-  student!: Student;
+  student?: Student;
 
   /**
    * Get lesson duration in minutes

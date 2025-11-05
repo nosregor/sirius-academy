@@ -16,14 +16,16 @@ export class Student extends User {
   /**
    * Many-to-Many relationship with teachers
    * Students can have multiple teachers, and teachers can have multiple students
+   * Initialized as empty array - populated when relations are loaded
    */
   @ManyToMany(() => Teacher, (teacher: Teacher) => teacher.students)
-  teachers!: Teacher[];
+  teachers: Teacher[] = [];
 
   /**
    * One-to-Many relationship with lessons
    * A student can have many lessons
+   * Initialized as empty array - populated when relations are loaded
    */
   @OneToMany(() => Lesson, (lesson: Lesson) => lesson.student)
-  lessons!: Lesson[];
+  lessons: Lesson[] = [];
 }

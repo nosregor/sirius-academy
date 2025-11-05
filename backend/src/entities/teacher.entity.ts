@@ -18,7 +18,8 @@ export class Teacher extends User {
 
   /**
    * Many-to-Many relationship with students
-   * Teachers can have multiple students, and students can have multiple teachers
+   * Teachers can have multiple students, and students can have multiple students
+   * Initialized as empty array - populated when relations are loaded
    */
   @ManyToMany(() => Student, (student: Student) => student.teachers, {
     cascade: false,
@@ -28,12 +29,13 @@ export class Teacher extends User {
     joinColumn: { name: 'teacher_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'student_id', referencedColumnName: 'id' },
   })
-  students!: Student[];
+  students: Student[] = [];
 
   /**
    * One-to-Many relationship with lessons
    * A teacher can have many lessons
+   * Initialized as empty array - populated when relations are loaded
    */
   @OneToMany(() => Lesson, (lesson: Lesson) => lesson.teacher)
-  lessons!: Lesson[];
+  lessons: Lesson[] = [];
 }

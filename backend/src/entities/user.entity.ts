@@ -60,7 +60,7 @@ export class User {
 
   @Index()
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deletedAt!: Date | null;
+  deletedAt?: Date | null;
 
   /**
    * Hash password before inserting into database
