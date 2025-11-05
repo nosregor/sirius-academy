@@ -49,7 +49,10 @@ export class CreateLessonDto {
    * Must be after start time
    * Duration between start and end must be 15 min - 4 hours
    */
-  @ApiProperty({ type: String, example: new Date(Date.now() + 3600000).toISOString() })
+  @ApiProperty({
+    type: String,
+    example: new Date(Date.now() + 3600000).toISOString(),
+  })
   @IsNotEmpty({ message: 'End time is required' })
   @Type(() => Date)
   @IsDate({ message: 'End time must be a valid date' })

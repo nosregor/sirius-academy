@@ -39,9 +39,6 @@ async function bootstrap(): Promise<void> {
         persistAuthorization: true,
       },
     });
-    console.log(
-      `📘 Swagger UI available at: http://localhost:${port}/${apiPrefix}/docs`,
-    );
   }
 
   // Global validation pipe with class-validator
@@ -64,6 +61,11 @@ async function bootstrap(): Promise<void> {
   console.log(
     `🚀 Application is running on: http://localhost:${port}/${apiPrefix}`,
   );
+  if (enableSwagger) {
+    console.log(
+      `📘 API Documentation: http://localhost:${port}/${apiPrefix}/docs`,
+    );
+  }
 }
 
 bootstrap();

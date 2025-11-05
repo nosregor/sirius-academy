@@ -8,7 +8,7 @@ import { Lesson } from './lesson.entity';
  * Uses Single Table Inheritance - stored in 'users' table with type discriminator
  * Extends User entity with teacher-specific fields and relationships
  */
-@ChildEntity()
+@ChildEntity('teacher')
 export class Teacher extends User {
   @Column({ type: 'varchar', length: 100 })
   instrument!: string;
