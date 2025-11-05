@@ -47,7 +47,7 @@ export class TeacherList implements OnInit {
 
   teachers = signal<Teacher[]>([]);
   isLoading = signal<boolean>(true);
-  displayedColumns = ['name', 'instrument', 'experience', 'actions'];
+  displayedColumns = ['name', 'instrument', 'experience', 'studentsCount', 'actions'];
 
   ngOnInit(): void {
     this.loadTeachers();
@@ -135,5 +135,9 @@ export class TeacherList implements OnInit {
 
   getFullName(teacher: Teacher): string {
     return `${teacher.firstName} ${teacher.lastName}`;
+  }
+
+  getStudentCount(students: Student[]): number {
+    return students?.length || 0;
   }
 }

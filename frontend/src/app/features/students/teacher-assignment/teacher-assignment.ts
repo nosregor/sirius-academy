@@ -41,6 +41,8 @@ export class TeacherAssignment implements OnInit {
 
   assignedTeachers = signal<Teacher[]>([]);
   availableTeachers = signal<Teacher[]>([]);
+  matchingInstrumentTeachers = signal<Teacher[]>([]);
+  otherInstrumentTeachers = signal<Teacher[]>([]);
   isLoading = signal<boolean>(true);
 
   ngOnInit(): void {
@@ -62,6 +64,13 @@ export class TeacherAssignment implements OnInit {
         const assignedIds = new Set(assigned.map((t) => t.id));
         const available = all.filter((t) => !assignedIds.has(t.id));
         this.availableTeachers.set(available);
+
+        // Separate teachers by matching instrument (prioritize same instrument)
+        const matching = available.filter((t) => t.instrument === this.data.student.instrument);
+        const others = available.filter((t) => t.instrument !== this.data.student.instrument);
+
+        this.matchingInstrumentTeachers.set(matching);
+        this.otherInstrumentTeachers.set(others);
 
         this.isLoading.set(false);
       },
