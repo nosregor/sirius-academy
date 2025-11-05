@@ -15,7 +15,14 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { Teacher } from '@entities/teacher.entity';
 import { Student } from '@entities/student.entity';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+} from '@nestjs/swagger';
 
 /**
  * TeachersController
@@ -34,7 +41,7 @@ export class TeachersController {
     summary: 'Create teacher',
     description: 'Create a new teacher with instrument and experience.',
   })
-  @ApiResponse({ status: 201, description: 'Teacher created.' })
+  @ApiCreatedResponse({ description: 'Teacher created.', type: Teacher })
   createTeacher(@Body() createTeacherDto: CreateTeacherDto): Promise<Teacher> {
     return this.teachersService.createTeacher(createTeacherDto);
   }
@@ -45,7 +52,11 @@ export class TeachersController {
     summary: 'List teachers',
     description: 'Retrieve all teachers.',
   })
-  @ApiResponse({ status: 200, description: 'List of teachers returned.' })
+  @ApiOkResponse({
+    description: 'List of teachers returned.',
+    type: Teacher,
+    isArray: true,
+  })
   findAllTeachers(): Promise<Teacher[]> {
     return this.teachersService.findAllTeachers();
   }
@@ -57,7 +68,7 @@ export class TeachersController {
     description: 'Retrieve a single teacher by UUID.',
   })
   @ApiParam({ name: 'id', description: 'Teacher UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'Teacher found.' })
+  @ApiOkResponse({ description: 'Teacher found.', type: Teacher })
   findTeacherById(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Teacher> {
@@ -71,7 +82,7 @@ export class TeachersController {
     description: 'Update an existing teacher by UUID.',
   })
   @ApiParam({ name: 'id', description: 'Teacher UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'Teacher updated.' })
+  @ApiOkResponse({ description: 'Teacher updated.', type: Teacher })
   updateTeacher(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateTeacherDto: UpdateTeacherDto,
@@ -86,7 +97,7 @@ export class TeachersController {
     description: 'Soft delete a teacher by UUID.',
   })
   @ApiParam({ name: 'id', description: 'Teacher UUID', format: 'uuid' })
-  @ApiResponse({ status: 204, description: 'Teacher deleted.' })
+  @ApiNoContentResponse({ description: 'Teacher deleted.' })
   deleteTeacher(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     return this.teachersService.deleteTeacher(id);
   }
@@ -98,7 +109,11 @@ export class TeachersController {
     description: 'Retrieve all students assigned to a teacher.',
   })
   @ApiParam({ name: 'id', description: 'Teacher UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: "Teacher's students returned." })
+  @ApiOkResponse({
+    description: "Teacher's students returned.",
+    type: Student,
+    isArray: true,
+  })
   findStudentsByTeacher(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Student[]> {

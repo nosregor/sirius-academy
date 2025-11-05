@@ -15,7 +15,14 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Student } from '@entities/student.entity';
 import { Teacher } from '@entities/teacher.entity';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+} from '@nestjs/swagger';
 
 /**
  * StudentsController
@@ -34,7 +41,7 @@ export class StudentsController {
     summary: 'Create student',
     description: 'Create a new student with instrument.',
   })
-  @ApiResponse({ status: 201, description: 'Student created.' })
+  @ApiCreatedResponse({ description: 'Student created.', type: Student })
   createStudent(@Body() createStudentDto: CreateStudentDto): Promise<Student> {
     return this.studentsService.createStudent(createStudentDto);
   }
@@ -45,7 +52,11 @@ export class StudentsController {
     summary: 'List students',
     description: 'Retrieve all students.',
   })
-  @ApiResponse({ status: 200, description: 'List of students returned.' })
+  @ApiOkResponse({
+    description: 'List of students returned.',
+    type: Student,
+    isArray: true,
+  })
   findAllStudents(): Promise<Student[]> {
     return this.studentsService.findAllStudents();
   }
@@ -57,7 +68,7 @@ export class StudentsController {
     description: 'Retrieve a single student by UUID.',
   })
   @ApiParam({ name: 'id', description: 'Student UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'Student found.' })
+  @ApiOkResponse({ description: 'Student found.', type: Student })
   findStudentById(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Student> {
@@ -71,7 +82,7 @@ export class StudentsController {
     description: 'Update an existing student by UUID.',
   })
   @ApiParam({ name: 'id', description: 'Student UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'Student updated.' })
+  @ApiOkResponse({ description: 'Student updated.', type: Student })
   updateStudent(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateStudentDto: UpdateStudentDto,
@@ -86,7 +97,7 @@ export class StudentsController {
     description: 'Soft delete a student by UUID.',
   })
   @ApiParam({ name: 'id', description: 'Student UUID', format: 'uuid' })
-  @ApiResponse({ status: 204, description: 'Student deleted.' })
+  @ApiNoContentResponse({ description: 'Student deleted.' })
   deleteStudent(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     return this.studentsService.deleteStudent(id);
   }
@@ -98,7 +109,11 @@ export class StudentsController {
     description: 'Retrieve all teachers assigned to a student.',
   })
   @ApiParam({ name: 'id', description: 'Student UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: "Student's teachers returned." })
+  @ApiOkResponse({
+    description: "Student's teachers returned.",
+    type: Teacher,
+    isArray: true,
+  })
   findTeachersByStudent(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Teacher[]> {
@@ -113,7 +128,7 @@ export class StudentsController {
   })
   @ApiParam({ name: 'id', description: 'Student UUID', format: 'uuid' })
   @ApiParam({ name: 'teacherId', description: 'Teacher UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'Teacher assigned.' })
+  @ApiOkResponse({ description: 'Teacher assigned.', type: Student })
   assignTeacherToStudent(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('teacherId', new ParseUUIDPipe()) teacherId: string,
@@ -129,7 +144,7 @@ export class StudentsController {
   })
   @ApiParam({ name: 'id', description: 'Student UUID', format: 'uuid' })
   @ApiParam({ name: 'teacherId', description: 'Teacher UUID', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'Teacher unassigned.' })
+  @ApiOkResponse({ description: 'Teacher unassigned.', type: Student })
   unassignTeacherFromStudent(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('teacherId', new ParseUUIDPipe()) teacherId: string,
