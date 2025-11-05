@@ -4,14 +4,13 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * Initial schema migration with Single Table Inheritance and Performance Indexes
  *
  * Creates:
- * - users table (with STI discriminator 'type' for teachers/students)
+ * - users table
  * - lessons table (with time slot and duration constraints)
  * - teacher_students join table (many-to-many relationship)
  *
  * Performance Indexes:
  * - users.role - Filter by user role
  * - users.deletedAt - Soft delete queries
- * - users.type - STI discriminator queries
  * - lessons.status - Filter by lesson status
  * - lessons.teacher_id + start_time (composite) - Teacher schedule queries
  * - lessons.student_id + start_time (composite) - Student schedule queries
@@ -34,19 +33,13 @@ export class InitialSchemaWithIndexes1762340580136
       `CREATE TYPE "public"."users_role_enum" AS ENUM('teacher', 'student')`,
     );
     await queryRunner.query(
-      `CREATE TYPE "public"."users_type_enum" AS ENUM('Teacher', 'Student')`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying(100) NOT NULL, "lastName" character varying(100) NOT NULL, "password" character varying(255) NOT NULL, "role" "public"."users_role_enum" NOT NULL, "isPasswordHashed" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "instrument" character varying(100), "experience" integer DEFAULT '0', "type" "public"."users_type_enum" NOT NULL, CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying(100) NOT NULL, "lastName" character varying(100) NOT NULL, "password" character varying(255) NOT NULL, "role" "public"."users_role_enum" NOT NULL, "isPasswordHashed" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "instrument" character varying(100), "experience" integer DEFAULT '0', CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_ace513fa30d485cfd25c11a9e4" ON "users" ("role") `,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_2a32f641edba1d0f973c19cc94" ON "users" ("deletedAt") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_94e2000b5f7ee1f9c491f0f8a8" ON "users" ("type") `,
     );
     await queryRunner.query(
       `CREATE TYPE "public"."lessons_status_enum" AS ENUM('pending', 'confirmed', 'cancelled', 'completed')`,
@@ -157,7 +150,6 @@ export class InitialSchemaWithIndexes1762340580136
       `DROP INDEX "public"."IDX_ace513fa30d485cfd25c11a9e4"`,
     );
     await queryRunner.query(`DROP TABLE "users"`);
-    await queryRunner.query(`DROP TYPE "public"."users_type_enum"`);
     await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
   }
 }
