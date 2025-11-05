@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -21,6 +22,7 @@ import { LoadingSpinner } from '../../../shared/components/loading-spinner/loadi
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatButtonModule,
     MatCardModule,
     MatSnackBarModule,
@@ -41,6 +43,25 @@ export class TeacherForm implements OnInit {
   isLoading = signal<boolean>(false);
   isSaving = signal<boolean>(false);
   teacherId: string | null = null;
+
+  readonly instrumentOptions = [
+    'Piano',
+    'Guitar',
+    'Violin',
+    'Viola',
+    'Cello',
+    'Bass',
+    'Drums',
+    'Flute',
+    'Clarinet',
+    'Saxophone',
+    'Trumpet',
+    'Trombone',
+    'Voice',
+    'Harp',
+    'Ukulele',
+    'Organ',
+  ];
 
   ngOnInit(): void {
     this.initializeForm();

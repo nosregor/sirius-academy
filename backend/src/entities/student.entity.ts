@@ -2,6 +2,7 @@ import { ChildEntity, Column, ManyToMany, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Teacher } from './teacher.entity';
 import { Lesson } from './lesson.entity';
+import { Instrument } from './instrument.enum';
 
 /**
  * Student entity
@@ -10,8 +11,11 @@ import { Lesson } from './lesson.entity';
  */
 @ChildEntity('student')
 export class Student extends User {
-  @Column({ type: 'varchar', length: 100 })
-  instrument!: string;
+  @Column({
+    type: 'enum',
+    enum: Instrument,
+  })
+  instrument!: Instrument;
 
   /**
    * Many-to-Many relationship with teachers

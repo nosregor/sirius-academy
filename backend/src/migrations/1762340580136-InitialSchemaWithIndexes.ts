@@ -33,7 +33,10 @@ export class InitialSchemaWithIndexes1762340580136
       `CREATE TYPE "public"."users_role_enum" AS ENUM('teacher', 'student')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying(100) NOT NULL, "lastName" character varying(100) NOT NULL, "password" character varying(255) NOT NULL, "role" "public"."users_role_enum" NOT NULL, "isPasswordHashed" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "instrument" character varying(100), "experience" integer DEFAULT '0', CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
+      `CREATE TYPE "public"."users_instrument_enum" AS ENUM('Piano', 'Guitar', 'Violin', 'Viola', 'Cello', 'Bass', 'Drums', 'Flute', 'Clarinet', 'Saxophone', 'Trumpet', 'Trombone', 'Voice', 'Harp', 'Ukulele', 'Organ')`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying(100) NOT NULL, "lastName" character varying(100) NOT NULL, "password" character varying(255) NOT NULL, "role" "public"."users_role_enum" NOT NULL, "isPasswordHashed" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "instrument" "public"."users_instrument_enum", "experience" integer DEFAULT '0', CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_ace513fa30d485cfd25c11a9e4" ON "users" ("role") `,
@@ -150,6 +153,7 @@ export class InitialSchemaWithIndexes1762340580136
       `DROP INDEX "public"."IDX_ace513fa30d485cfd25c11a9e4"`,
     );
     await queryRunner.query(`DROP TABLE "users"`);
+    await queryRunner.query(`DROP TYPE "public"."users_instrument_enum"`);
     await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
   }
 }

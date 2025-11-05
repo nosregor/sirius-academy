@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import 'reflect-metadata';
 import { dataSource } from '../../config/database.config';
 import { Teacher } from '../../entities/teacher.entity';
 import { Student } from '../../entities/student.entity';
 import { Lesson, LessonStatus } from '../../entities/lesson.entity';
+import { Instrument } from '../../entities/instrument.enum';
+
+// Dynamic import for ESM module
+let faker: any;
 
 type SeedResult = {
   teacherIds: string[];
@@ -20,16 +25,6 @@ function addMinutes(date: Date, minutes: number): Date {
 
 function pickOne<T>(arr: readonly T[]): T {
   return arr[getRandomInt(0, arr.length - 1)]!;
-}
-
-function roundToQuarterHour(date: Date): Date {
-  const d = new Date(date);
-  d.setSeconds(0, 0);
-  const minutes = d.getMinutes();
-  const rounded = Math.floor(minutes / 15) * 15;
-  d.setMinutes(rounded);
-
-  return d;
 }
 
 async function clearTables(): Promise<void> {
@@ -53,17 +48,18 @@ async function clearTables(): Promise<void> {
 }
 
 async function seedTeachers(count: number): Promise<Teacher[]> {
-  const instruments = ['Piano', 'Guitar', 'Violin', 'Voice', 'Drums', 'Bass'];
+  const allInstruments = Object.values(Instrument);
   const teacherRepo = dataSource.getRepository(Teacher);
   const teachers: Teacher[] = [];
+
   for (let i = 0; i < count; i++) {
     const t = teacherRepo.create({
-      firstName: `Teacher${i + 1}`,
-      lastName: 'Test',
-      password: 'password123',
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      password: faker.internet.password({ length: 12, memorable: false }),
       role: 'teacher',
-      instrument: instruments[i % instruments.length],
-      experience: getRandomInt(1, 20),
+      instrument: pickOne(allInstruments),
+      experience: getRandomInt(1, 30),
     } as Teacher);
     teachers.push(t);
   }
@@ -71,16 +67,17 @@ async function seedTeachers(count: number): Promise<Teacher[]> {
 }
 
 async function seedStudents(count: number): Promise<Student[]> {
-  const instruments = ['Piano', 'Guitar', 'Violin', 'Voice', 'Drums', 'Bass'];
+  const allInstruments = Object.values(Instrument);
   const studentRepo = dataSource.getRepository(Student);
   const students: Student[] = [];
+
   for (let i = 0; i < count; i++) {
     const s = studentRepo.create({
-      firstName: `Student${i + 1}`,
-      lastName: 'Test',
-      password: 'password123',
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      password: faker.internet.password({ length: 12, memorable: false }),
       role: 'student',
-      instrument: instruments[i % instruments.length],
+      instrument: pickOne(allInstruments),
     } as Student);
     students.push(s);
   }
@@ -93,24 +90,76 @@ async function assignTeachers(
 ): Promise<void> {
   const studentRepo = dataSource.getRepository(Student);
   for (const student of students) {
-    const numTeachers = getRandomInt(1, Math.min(3, teachers.length));
-    const shuffled = [...teachers].sort(() => Math.random() - 0.5);
-    student.teachers = shuffled.slice(0, numTeachers);
+    // Students can have 1-3 teachers, preferably matching their instrument
+    const numTeachers = faker.helpers.weightedArrayElement([
+      { weight: 5, value: 1 },
+      { weight: 3, value: 2 },
+      { weight: 2, value: 3 },
+    ]);
+
+    // Prefer teachers with matching instrument, but also include variety
+    const matchingTeachers = teachers.filter(
+      (t) => t.instrument === student.instrument,
+    );
+    const otherTeachers = teachers.filter(
+      (t) => t.instrument !== student.instrument,
+    );
+
+    const selectedTeachers: Teacher[] = [];
+
+    // Always include at least one matching teacher if available
+    if (matchingTeachers.length > 0 && numTeachers > 0) {
+      selectedTeachers.push(pickOne(matchingTeachers));
+    }
+
+    // Fill remaining slots with random teachers
+    const remainingSlots = numTeachers - selectedTeachers.length;
+    const availableTeachers = [
+      ...matchingTeachers.filter((t) => !selectedTeachers.includes(t)),
+      ...otherTeachers,
+    ];
+    const shuffled = [...availableTeachers].sort(() => Math.random() - 0.5);
+    selectedTeachers.push(...shuffled.slice(0, remainingSlots));
+
+    student.teachers = selectedTeachers;
     await studentRepo.save(student);
   }
 }
 
 function generateLessonWindows(): Array<{ start: Date; end: Date }> {
   const windows: Array<{ start: Date; end: Date }> = [];
-  const base = roundToQuarterHour(new Date());
-  base.setHours(9, 0, 0, 0);
-  for (let d = 0; d < 5; d++) {
-    for (let h = 0; h < 7; h++) {
-      const start = addMinutes(addMinutes(new Date(base), d * 24 * 60), h * 60);
-      const durationOptions = [30, 45, 60, 90] as const;
+  const base = new Date();
+  base.setHours(0, 0, 0, 0);
+
+  // Generate lesson windows for the next 30 days
+  for (let d = 0; d < 30; d++) {
+    const dayDate = new Date(base);
+    dayDate.setDate(base.getDate() + d);
+
+    // Skip weekends
+    const dayOfWeek = dayDate.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+
+    // Generate 2-5 lessons per day between 9 AM and 7 PM
+    const numLessons = getRandomInt(2, 5);
+    const startHour = 9;
+    const endHour = 19;
+    const availableHours = endHour - startHour;
+
+    for (let i = 0; i < numLessons; i++) {
+      const hour = startHour + getRandomInt(0, availableHours - 1);
+      const minute = pickOne([0, 15, 30, 45] as const);
+      const start = new Date(dayDate);
+      start.setHours(hour, minute, 0, 0);
+
+      const durationOptions = [30, 45, 60, 90, 120] as const;
       const duration = pickOne(durationOptions);
       const end = addMinutes(start, duration);
-      windows.push({ start, end });
+
+      // Ensure lesson doesn't go past 7 PM
+      if (end.getHours() <= 19) {
+        windows.push({ start, end });
+      }
     }
   }
   return windows;
@@ -124,21 +173,55 @@ async function seedLessons(
   const lessonRepo = dataSource.getRepository(Lesson);
   const windows = generateLessonWindows();
   const lessons: Lesson[] = [];
+  const usedWindows = new Set<number>();
 
-  for (let i = 0; i < targetCount; i++) {
-    const teacher = teachers[getRandomInt(0, teachers.length - 1)]!;
-    const student = students[getRandomInt(0, students.length - 1)]!;
-    const w = windows[getRandomInt(0, windows.length - 1)]!;
+  for (let i = 0; i < targetCount && i < windows.length; i++) {
+    // Pick a random teacher and student
+    const teacher = pickOne(teachers);
+    const student = pickOne(students);
+
+    // Ensure student is assigned to teacher (or assign if not)
+    if (
+      !student.teachers ||
+      !student.teachers.some((t) => t.id === teacher.id)
+    ) {
+      const studentRepo = dataSource.getRepository(Student);
+      if (!student.teachers) {
+        student.teachers = [];
+      }
+      student.teachers.push(teacher);
+      await studentRepo.save(student);
+    }
+
+    // Pick an unused window
+    let windowIndex: number;
+    do {
+      windowIndex = getRandomInt(0, windows.length - 1);
+    } while (usedWindows.has(windowIndex) && usedWindows.size < windows.length);
+
+    usedWindows.add(windowIndex);
+    const w = windows[windowIndex]!;
     const { start, end } = w;
 
-    const statusPool: LessonStatus[] = [
-      LessonStatus.PENDING,
-      LessonStatus.CONFIRMED,
-      LessonStatus.CONFIRMED,
-      LessonStatus.COMPLETED,
-      LessonStatus.CANCELLED,
-    ];
-    const status = statusPool[getRandomInt(0, statusPool.length - 1)];
+    // Determine status based on date (past = completed/cancelled, future = pending/confirmed)
+    const now = new Date();
+    let status: LessonStatus;
+    if (end < now) {
+      // Past lessons - mostly completed, some cancelled
+      status = faker.helpers.weightedArrayElement([
+        { weight: 8, value: LessonStatus.COMPLETED },
+        { weight: 2, value: LessonStatus.CANCELLED },
+      ]);
+    } else if (start < now) {
+      // Currently ongoing - should be confirmed
+      status = LessonStatus.CONFIRMED;
+    } else {
+      // Future lessons - mix of pending and confirmed
+      status = faker.helpers.weightedArrayElement([
+        { weight: 3, value: LessonStatus.PENDING },
+        { weight: 7, value: LessonStatus.CONFIRMED },
+      ]);
+    }
 
     const l = lessonRepo.create({
       teacherId: teacher.id,
@@ -153,7 +236,10 @@ async function seedLessons(
   return lessonRepo.save(lessons);
 }
 
-async function run(): Promise<SeedResult> {
+async function runSeed(): Promise<SeedResult> {
+  // Initialize faker with dynamic import
+  const fakerModule = await import('@faker-js/faker');
+  faker = fakerModule.faker;
   await dataSource.initialize();
   try {
     console.log('Seeding database...');
@@ -175,7 +261,7 @@ async function run(): Promise<SeedResult> {
   }
 }
 
-run()
+runSeed()
   .then((res) => {
     console.log(
       JSON.stringify(

@@ -44,7 +44,11 @@
         <div class="form-row">
           <mat-form-field class="full-width">
             <mat-label>Instrument</mat-label>
-            <input matInput formControlName="instrument" />
+            <mat-select formControlName="instrument">
+              @for (instrument of instrumentOptions; track instrument) {
+                <mat-option [value]="instrument">{{ instrument }}</mat-option>
+              }
+            </mat-select>
             @if (getErrorMessage('instrument')) {
               <mat-error>{{ getErrorMessage('instrument') }}</mat-error>
             }

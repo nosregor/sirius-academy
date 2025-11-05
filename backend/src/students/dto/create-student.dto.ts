@@ -1,6 +1,7 @@
 import {
   IsNotEmpty,
   IsString,
+  IsEnum,
   Matches,
   MaxLength,
   MinLength,
@@ -11,6 +12,7 @@ import {
   VALIDATION_MESSAGES,
 } from '@common/constants/validation.constants';
 import { ApiProperty } from '@nestjs/swagger';
+import { Instrument } from '@entities/instrument.enum';
 
 /**
  * Data Transfer Object for creating a new student
@@ -70,15 +72,12 @@ export class CreateStudentDto {
 
   /**
    * Primary instrument the student wants to learn
-   * e.g., "Piano", "Guitar", "Violin", "Voice"
+   * Must be one of the valid Instrument enum values
    */
-  @ApiProperty({ example: 'Guitar' })
-  @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.trim() : value,
-  )
-  @IsString()
+  @ApiProperty({ enum: Instrument, example: Instrument.GUITAR })
   @IsNotEmpty({ message: VALIDATION_MESSAGES.INSTRUMENT_REQUIRED })
-  @MinLength(VALIDATION_RULES.INSTRUMENT_MIN_LENGTH)
-  @MaxLength(VALIDATION_RULES.INSTRUMENT_MAX_LENGTH)
-  instrument!: string;
+  @IsEnum(Instrument, {
+    message: 'Instrument must be one of the valid instrument types',
+  })
+  instrument!: Instrument;
 }

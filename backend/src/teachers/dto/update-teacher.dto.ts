@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateTeacherDto } from './create-teacher.dto';
+import { Instrument } from '@entities/instrument.enum';
 
 /**
  * Data Transfer Object for updating teacher entities
@@ -16,8 +17,8 @@ export class UpdateTeacherDto extends PartialType(CreateTeacherDto) {
   @ApiPropertyOptional({ example: 'P@ssword123' })
   password?: string;
 
-  @ApiPropertyOptional({ example: 'Piano' })
-  instrument?: string;
+  @ApiPropertyOptional({ enum: Instrument, example: Instrument.PIANO })
+  instrument?: Instrument;
 
   @ApiPropertyOptional({ example: 5, minimum: 0, maximum: 80 })
   experience?: number;
