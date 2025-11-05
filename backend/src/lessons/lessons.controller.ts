@@ -8,7 +8,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put,
+  Patch,
   Query,
 } from '@nestjs/common';
 import { LessonsService } from './lessons.service';
@@ -124,7 +124,7 @@ export class LessonsController {
     return this.lessonsService.findLessonById(id);
   }
 
-  @Put(':id/confirm')
+  @Patch(':id/confirm')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Confirm lesson',
@@ -136,7 +136,7 @@ export class LessonsController {
     return this.lessonsService.confirmLesson(id);
   }
 
-  @Put(':id/reject')
+  @Patch(':id/reject')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reject lesson',
@@ -148,7 +148,7 @@ export class LessonsController {
     return this.lessonsService.rejectLesson(id);
   }
 
-  @Put(':id/complete')
+  @Patch(':id/complete')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Complete lesson',
@@ -162,7 +162,7 @@ export class LessonsController {
     return this.lessonsService.completeLesson(id);
   }
 
-  @Put(':id/cancel')
+  @Patch(':id/cancel')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cancel lesson', description: 'Cancel a lesson.' })
   @ApiParam({ name: 'id', description: 'Lesson UUID', format: 'uuid' })
@@ -171,7 +171,7 @@ export class LessonsController {
     return this.lessonsService.cancelLesson(id);
   }
 
-  @Put(':id/status')
+  @Patch(':id/status')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Update lesson status',

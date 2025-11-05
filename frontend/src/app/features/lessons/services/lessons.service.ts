@@ -88,23 +88,23 @@ export class LessonsService {
   }
 
   confirmLesson(id: string): Observable<Lesson> {
-    return this.apiService.put<Lesson>(`${this.endpoint}/${id}/confirm`, {});
+    return this.apiService.patch<Lesson>(`${this.endpoint}/${id}/confirm`, {});
   }
 
   rejectLesson(id: string): Observable<Lesson> {
-    return this.apiService.put<Lesson>(`${this.endpoint}/${id}/reject`, {});
+    return this.apiService.patch<Lesson>(`${this.endpoint}/${id}/reject`, {});
   }
 
   completeLesson(id: string): Observable<Lesson> {
-    return this.apiService.put<Lesson>(`${this.endpoint}/${id}/complete`, {});
+    return this.apiService.patch<Lesson>(`${this.endpoint}/${id}/complete`, {});
   }
 
   cancelLesson(id: string): Observable<Lesson> {
-    return this.apiService.put<Lesson>(`${this.endpoint}/${id}/cancel`, {});
+    return this.apiService.patch<Lesson>(`${this.endpoint}/${id}/cancel`, {});
   }
 
   updateLessonStatus(id: string, dto: UpdateLessonStatusDto): Observable<Lesson> {
-    return this.apiService.put<Lesson>(`${this.endpoint}/${id}/status`, dto);
+    return this.apiService.patch<Lesson>(`${this.endpoint}/${id}/status`, dto);
   }
 
   deleteLesson(id: string): Observable<void> {

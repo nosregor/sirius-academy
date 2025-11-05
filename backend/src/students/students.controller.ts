@@ -8,7 +8,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put,
+  Patch,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -69,7 +69,7 @@ export class StudentsController {
     return this.studentsService.findStudentById(id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Update student',

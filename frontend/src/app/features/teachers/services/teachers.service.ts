@@ -57,7 +57,7 @@ export class TeachersService {
   }
 
   updateTeacher(id: string, teacher: UpdateTeacherDto): Observable<Teacher> {
-    return this.apiService.put<Teacher>(`${this.endpoint}/${id}`, teacher);
+    return this.apiService.patch<Teacher>(`${this.endpoint}/${id}`, teacher);
   }
 
   deleteTeacher(id: string): Observable<void> {

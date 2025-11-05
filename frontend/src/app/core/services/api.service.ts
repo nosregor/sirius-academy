@@ -15,6 +15,10 @@ export class ApiService {
     return this.http.get<T>(`${this.baseUrl}/${path}`, { params });
   }
 
+  patch<T>(path: string, body: unknown): Observable<T> {
+    return this.http.patch<T>(`${this.baseUrl}/${path}`, body);
+  }
+
   post<T>(path: string, body: unknown): Observable<T> {
     return this.http.post<T>(`${this.baseUrl}/${path}`, body);
   }
