@@ -15,10 +15,7 @@ import { TeachersModule } from './teachers/teachers.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-/**
- * Root application module
- * Configures global modules, database connection, and core services
- */
+
 @Module({
   imports: [
     // Global configuration module
@@ -44,7 +41,7 @@ import { AppService } from './app.service';
           ...config,
           entities: [Lesson, Student, Teacher, User],
           synchronize: true, // Ensure this is true during development
-          logging: true, // Enable to see what's happening
+          logging: true,
         };
       },
     }),

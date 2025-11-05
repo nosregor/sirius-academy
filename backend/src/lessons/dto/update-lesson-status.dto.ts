@@ -12,10 +12,6 @@ import { ApiProperty } from '@nestjs/swagger';
  * - any → cancelled (lesson cancelled)
  */
 export class UpdateLessonStatusDto {
-  /**
-   * New status for the lesson
-   * Must be a valid LessonStatus enum value
-   */
   @ApiProperty({ enum: ['pending', 'confirmed', 'cancelled', 'completed'] })
   @IsNotEmpty({ message: 'Status is required' })
   @IsEnum(LessonStatus, {

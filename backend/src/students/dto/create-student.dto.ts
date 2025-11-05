@@ -14,17 +14,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Instrument } from '@entities/instrument.enum';
 
-/**
- * Data Transfer Object for creating a new student
- *
- * Validates all required fields according to business rules defined
- * in shared validation constants.
- */
 export class CreateStudentDto {
-  /**
-   * Student's first name
-   * Must be 2-100 characters, letters, spaces, hyphens, and apostrophes only
-   */
   @ApiProperty({ example: 'Jane' })
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -38,10 +28,6 @@ export class CreateStudentDto {
   })
   firstName!: string;
 
-  /**
-   * Student's last name
-   * Must be 2-100 characters, letters, spaces, hyphens, and apostrophes only
-   */
   @ApiProperty({ example: 'Smith' })
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -70,10 +56,6 @@ export class CreateStudentDto {
   })
   password!: string;
 
-  /**
-   * Primary instrument the student wants to learn
-   * Must be one of the valid Instrument enum values
-   */
   @ApiProperty({ enum: Instrument, example: Instrument.GUITAR })
   @IsNotEmpty({ message: VALIDATION_MESSAGES.INSTRUMENT_REQUIRED })
   @IsEnum(Instrument, {

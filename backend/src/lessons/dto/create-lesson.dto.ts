@@ -17,17 +17,11 @@ import { ApiProperty } from '@nestjs/swagger';
  * - End time must be after start time
  */
 export class CreateLessonDto {
-  /**
-   * UUID of the teacher for this lesson
-   */
   @ApiProperty({ format: 'uuid' })
   @IsNotEmpty({ message: 'Teacher ID is required' })
   @IsUUID('4', { message: 'Teacher ID must be a valid UUID' })
   teacherId!: string;
 
-  /**
-   * UUID of the student for this lesson
-   */
   @ApiProperty({ format: 'uuid' })
   @IsNotEmpty({ message: 'Student ID is required' })
   @IsUUID('4', { message: 'Student ID must be a valid UUID' })
@@ -60,12 +54,6 @@ export class CreateLessonDto {
   @IsValidLessonDuration()
   endTime!: Date;
 
-  /**
-   * Role of the user creating the lesson (teacher or student)
-   * Determines initial lesson status:
-   * - Teacher-created lessons → confirmed
-   * - Student-created lessons → pending
-   */
   @ApiProperty({ enum: ['teacher', 'student'] })
   @IsNotEmpty({ message: 'Creator is required' })
   @IsEnum(UserRole, {

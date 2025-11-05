@@ -4,19 +4,13 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-/**
- * Bootstrap the NestJS application
- * Configures global pipes, filters, and CORS
- */
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;
 
-  // Set global API prefix
   const apiPrefix = process.env.API_PREFIX || 'api/v1';
   app.setGlobalPrefix(apiPrefix);
 
-  // Enable CORS
   app.enableCors({
     origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:4200',
     credentials: true,
