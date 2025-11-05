@@ -35,7 +35,7 @@
             <mat-error>{{ getErrorMessage('password') }}</mat-error>
           }
           @if (!isEditMode()) {
-            <mat-hint>Min 8 characters, uppercase, lowercase, and number</mat-hint>
+            <mat-hint>8-64 chars: uppercase, lowercase, number. Special: @$!%*?&</mat-hint>
           } @else {
             <mat-hint>Leave blank to keep current password</mat-hint>
           }

@@ -77,7 +77,8 @@ export class TeacherForm implements OnInit {
         [
           Validators.required,
           Validators.minLength(8),
-          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/),
+          Validators.maxLength(64),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/),
         ],
       ],
       instrument: ['', Validators.required],
@@ -176,7 +177,11 @@ export class TeacherForm implements OnInit {
       return `Minimum length is ${minLength} characters`;
     }
     if (field.errors['pattern'] && fieldName === 'password') {
-      return 'Password must contain uppercase, lowercase, and number';
+      return 'Password must contain uppercase, lowercase, number, and only allowed special characters (@$!%*?&)';
+    }
+    if (field.errors['maxlength']) {
+      const maxLength = field.errors['maxlength'].requiredLength;
+      return `Maximum length is ${maxLength} characters`;
     }
     return '';
   }
