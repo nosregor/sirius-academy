@@ -24,12 +24,6 @@ import {
   ApiNoContentResponse,
 } from '@nestjs/swagger';
 
-/**
- * TeachersController
- *
- * Handles HTTP requests for teacher-related operations
- * Implements RESTful API endpoints with explicit status codes
- */
 @ApiTags('Teachers')
 @Controller('teachers')
 export class TeachersController {

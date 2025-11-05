@@ -6,10 +6,6 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-/**
- * Validator to ensure time is on 15-minute increments with clean timestamps
- * Checks that minutes are divisible by 15 and seconds/milliseconds are zero
- */
 @ValidatorConstraint({ async: false })
 export class IsValidTimeSlotConstraint implements ValidatorConstraintInterface {
   validate(value: unknown): boolean {
@@ -37,10 +33,6 @@ export class IsValidTimeSlotConstraint implements ValidatorConstraintInterface {
   }
 }
 
-/**
- * Decorator to validate time slot is on 15-minute increments with clean timestamps
- * @param validationOptions - Optional validation options
- */
 export function IsValidTimeSlot(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string): void {
     registerDecorator({
@@ -53,9 +45,6 @@ export function IsValidTimeSlot(validationOptions?: ValidationOptions) {
   };
 }
 
-/**
- * Validator to ensure lesson duration is between 15 minutes and 4 hours
- */
 @ValidatorConstraint({ async: false })
 export class IsValidLessonDurationConstraint
   implements ValidatorConstraintInterface
@@ -81,10 +70,6 @@ export class IsValidLessonDurationConstraint
   }
 }
 
-/**
- * Decorator to validate lesson duration
- * @param validationOptions - Optional validation options
- */
 export function IsValidLessonDuration(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string): void {
     registerDecorator({
@@ -97,9 +82,6 @@ export function IsValidLessonDuration(validationOptions?: ValidationOptions) {
   };
 }
 
-/**
- * Validator to ensure end time is after start time
- */
 @ValidatorConstraint({ async: false })
 export class IsAfterStartTimeConstraint
   implements ValidatorConstraintInterface
@@ -121,10 +103,6 @@ export class IsAfterStartTimeConstraint
   }
 }
 
-/**
- * Decorator to validate end time is after start time
- * @param validationOptions - Optional validation options
- */
 export function IsAfterStartTime(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string): void {
     registerDecorator({

@@ -3,10 +3,6 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateTeacherDto } from './create-teacher.dto';
 import { Instrument } from '@entities/instrument.enum';
 
-/**
- * Data Transfer Object for updating teacher entities
- * Extends CreateTeacherDto with optional fields
- */
 export class UpdateTeacherDto extends PartialType(CreateTeacherDto) {
   @ApiPropertyOptional({ example: 'John' })
   firstName?: string;

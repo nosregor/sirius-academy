@@ -8,6 +8,7 @@ import { Teacher } from '@entities/teacher.entity';
 import { UserRole } from '@entities/user.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { Instrument } from '@/entities';
 
 describe('StudentsService', () => {
   let service: StudentsService;
@@ -115,7 +116,7 @@ describe('StudentsService', () => {
       student.firstName = 'Jane';
 
       const updateDto: UpdateStudentDto = {
-        instrument: 'Violin',
+        instrument: Instrument.PIANO,
       };
 
       jest.spyOn(studentsRepository, 'findOne').mockResolvedValue(student);
@@ -139,7 +140,7 @@ describe('StudentsService', () => {
       student.id = 'student-id';
 
       const updateDto: UpdateStudentDto = {
-        instrument: 'Violin',
+        instrument: Instrument.PIANO,
       };
 
       const queryError = new QueryFailedError('', [], new Error());
@@ -183,7 +184,7 @@ describe('StudentsService', () => {
         firstName: 'Jane',
         lastName: 'Doe',
         password: 'password123',
-        instrument: 'Piano',
+        instrument: Instrument.PIANO,
       };
 
       const queryError = new QueryFailedError('', [], new Error());

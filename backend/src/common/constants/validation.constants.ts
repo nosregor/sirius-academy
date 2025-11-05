@@ -1,7 +1,3 @@
-/**
- * Shared validation constants for DTOs across the application
- * Ensures consistency in validation rules
- */
 
 export const VALIDATION_RULES = {
   // Name validation

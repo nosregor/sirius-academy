@@ -24,12 +24,6 @@ import {
   ApiNoContentResponse,
 } from '@nestjs/swagger';
 
-/**
- * StudentsController
- *
- * Handles HTTP requests for student-related operations
- * Implements RESTful API endpoints with explicit status codes
- */
 @ApiTags('Students')
 @Controller('students')
 export class StudentsController {

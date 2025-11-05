@@ -5,6 +5,7 @@ import { Teacher } from '@entities/teacher.entity';
 import { TeachersService } from './teachers.service';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { Student } from '@entities/student.entity';
+import { Instrument } from '@entities/instrument.enum';
 
 describe('TeachersService', () => {
   let service: TeachersService;
@@ -91,12 +92,12 @@ describe('TeachersService', () => {
     existingTeacher.id = 'teacher-id';
     existingTeacher.firstName = 'Existing';
     existingTeacher.lastName = 'Teacher';
-    existingTeacher.instrument = 'Guitar';
+    existingTeacher.instrument = Instrument.GUITAR;
     existingTeacher.experience = 5;
 
     const updateDto: UpdateTeacherDto = {
       firstName: 'Updated',
-      instrument: 'Piano',
+      instrument: Instrument.PIANO,
       experience: 10,
     };
 
@@ -112,7 +113,7 @@ describe('TeachersService', () => {
     expect(repository.merge).toHaveBeenCalledWith(existingTeacher, updateDto);
     expect(repository.save).toHaveBeenCalledWith(mergedTeacher);
     expect(result.firstName).toBe('Updated');
-    expect(result.instrument).toBe('Piano');
+    expect(result.instrument).toBe(Instrument.PIANO);
     expect(result.experience).toBe(10);
   });
 
@@ -133,7 +134,7 @@ describe('TeachersService', () => {
       firstName: 'Test',
       lastName: 'Teacher',
       password: 'password123',
-      instrument: 'Guitar',
+      instrument: Instrument.GUITAR,
       experience: 5,
     };
 
@@ -153,7 +154,7 @@ describe('TeachersService', () => {
     teacher.id = 'teacher-id';
 
     const updateDto: UpdateTeacherDto = {
-      instrument: 'Violin',
+      instrument: Instrument.VOICE,
     };
 
     const queryError = new QueryFailedError('', [], new Error());

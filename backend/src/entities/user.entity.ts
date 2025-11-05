@@ -12,19 +12,11 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-/**
- * User role enumeration
- */
 export enum UserRole {
   TEACHER = 'teacher',
   STUDENT = 'student',
 }
 
-/**
- * Base User entity
- * Uses Single Table Inheritance (STI) with discriminator column
- * Teacher and Student entities extend this using @ChildEntity
- */
 @Entity('users')
 @TableInheritance({
   column: { type: 'enum', name: 'role', enum: UserRole },
@@ -62,9 +54,6 @@ export class User {
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt?: Date | null;
 
-  /**
-   * Hash password before inserting into database
-   */
   @BeforeInsert()
   async hashPasswordBeforeInsert(): Promise<void> {
     if (this.password && !this.isPasswordHashed) {
@@ -74,12 +63,8 @@ export class User {
     }
   }
 
-  /**
-   * Hash password before updating if it has changed
-   */
   @BeforeUpdate()
   async hashPasswordBeforeUpdate(): Promise<void> {
-    // Only hash if password has been modified and isn't already hashed
     if (this.password && !this.isPasswordHashed) {
       const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
       this.password = await bcrypt.hash(this.password, saltRounds);
@@ -87,11 +72,6 @@ export class User {
     }
   }
 
-  /**
-   * Validate password against hashed password
-   * @param plainPassword - Plain text password to validate
-   * @returns Promise<boolean> - True if password matches
-   */
   async validatePassword(plainPassword: string): Promise<boolean> {
     return bcrypt.compare(plainPassword, this.password);
   }

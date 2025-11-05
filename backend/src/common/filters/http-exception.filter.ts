@@ -8,9 +8,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-/**
- * Error response interface
- */
 interface ErrorResponse {
   statusCode: number;
   timestamp: string;
@@ -20,19 +17,10 @@ interface ErrorResponse {
   error?: string;
 }
 
-/**
- * Global HTTP exception filter
- * Handles all HTTP exceptions and formats error responses consistently
- */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(HttpExceptionFilter.name);
 
-  /**
-   * Extract error message from exception with type safety
-   * @param exception - The caught exception
-   * @returns Human-readable error message
-   */
   private getErrorMessage(exception: unknown): string {
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
@@ -58,11 +46,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     return 'Internal server error';
   }
 
-  /**
-   * Get error name/type for additional context
-   * @param exception - The caught exception
-   * @returns Error type or undefined
-   */
   private getErrorType(exception: unknown): string | undefined {
     if (exception instanceof HttpException) {
       const response = exception.getResponse();

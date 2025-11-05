@@ -11,12 +11,6 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { UserRole } from '@entities/user.entity';
 
-/**
- * StudentsService
- *
- * Handles business logic for student operations
- * Includes CRUD operations and teacher assignment management
- */
 @Injectable()
 export class StudentsService {
   constructor(
@@ -26,10 +20,6 @@ export class StudentsService {
     private readonly teachersRepository: Repository<Teacher>,
   ) {}
 
-  /**
-   * Create a new student with validated data
-   * Ensures role is set to student and password is hashed via entity hooks
-   */
   async createStudent(createStudentDto: CreateStudentDto): Promise<Student> {
     const student = this.studentsRepository.create({
       ...createStudentDto,
@@ -44,9 +34,6 @@ export class StudentsService {
     }
   }
 
-  /**
-   * Retrieve all active students (excluding soft-deleted records)
-   */
   async findAllStudents(): Promise<Student[]> {
     return this.studentsRepository.find({
       where: { deletedAt: IsNull() },
@@ -55,10 +42,6 @@ export class StudentsService {
     });
   }
 
-  /**
-   * Retrieve a single student by ID with related teachers
-   * Throws NotFoundException if student is not found or soft-deleted
-   */
   async findStudentById(id: string): Promise<Student> {
     const student = await this.studentsRepository.findOne({
       where: { id, deletedAt: IsNull() },
@@ -72,10 +55,6 @@ export class StudentsService {
     return student;
   }
 
-  /**
-   * Update student details with validated data
-   * Returns updated student with related teachers
-   */
   async updateStudent(
     id: string,
     updateStudentDto: UpdateStudentDto,
@@ -105,19 +84,11 @@ export class StudentsService {
     }
   }
 
-  /**
-   * Soft delete a student by setting deletedAt timestamp
-   * Returns void but ensures student exists before deletion
-   */
   async deleteStudent(id: string): Promise<void> {
     await this.findStudentById(id);
     await this.studentsRepository.softDelete(id);
   }
 
-  /**
-   * Assign a teacher to a student (add to many-to-many relationship)
-   * Validates both entities exist before assignment
-   */
   async assignTeacherToStudent(
     studentId: string,
     teacherId: string,
@@ -149,10 +120,6 @@ export class StudentsService {
     return this.findStudentById(studentId);
   }
 
-  /**
-   * Unassign a teacher from a student (remove from many-to-many relationship)
-   * Validates both entities exist before removal
-   */
   async unassignTeacherFromStudent(
     studentId: string,
     teacherId: string,
@@ -182,10 +149,6 @@ export class StudentsService {
     return this.findStudentById(studentId);
   }
 
-  /**
-   * Retrieve all teachers for a given student
-   * Throws NotFoundException if student does not exist
-   */
   async findTeachersByStudent(id: string): Promise<Teacher[]> {
     const student = await this.studentsRepository.findOne({
       where: { id, deletedAt: IsNull() },

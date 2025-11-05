@@ -12,15 +12,6 @@ import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonStatusDto } from './dto/update-lesson-status.dto';
 import { UserRole } from '@entities/user.entity';
 
-/**
- * LessonsService
- *
- * Handles business logic for lesson operations including:
- * - Dual workflow (teacher-created vs student-requested)
- * - Overlap detection for teachers and students
- * - Status transitions
- * - Relationship validation
- */
 @Injectable()
 export class LessonsService {
   constructor(
@@ -32,13 +23,6 @@ export class LessonsService {
     private readonly studentsRepository: Repository<Student>,
   ) {}
 
-  /**
-   * Create a new lesson with dual workflow logic
-   * - Teacher-created lessons → confirmed status
-   * - Student-created lessons → pending status
-   * Validates teacher/student existence and assignment relationship
-   * Checks for schedule overlaps
-   */
   async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
     const { teacherId, studentId, startTime, endTime, creatorRole } =
       createLessonDto;
@@ -119,10 +103,6 @@ export class LessonsService {
     }
   }
 
-  /**
-   * Check if teacher has any overlapping lessons
-   * Returns true if there's a conflict, false otherwise
-   */
   async checkTeacherAvailability(
     teacherId: string,
     startTime: Date,
@@ -154,10 +134,6 @@ export class LessonsService {
     return !!conflictingLesson;
   }
 
-  /**
-   * Check if student has any overlapping lessons
-   * Returns true if there's a conflict, false otherwise
-   */
   async checkStudentAvailability(
     studentId: string,
     startTime: Date,
@@ -189,12 +165,6 @@ export class LessonsService {
     return !!conflictingLesson;
   }
 
-  /**
-   * Retrieve all lessons with optional filtering
-   * @param status - Filter by lesson status
-   * @param teacherId - Filter by teacher
-   * @param studentId - Filter by student
-   */
   async findAllLessons(
     status?: LessonStatus,
     teacherId?: string,
@@ -221,11 +191,6 @@ export class LessonsService {
     return queryBuilder.getMany();
   }
 
-  /**
-   * Retrieve a single lesson by ID
-   * @param id - Lesson UUID
-   * @throws NotFoundException if lesson is not found
-   */
   async findLessonById(id: string): Promise<Lesson> {
     const lesson = await this.lessonsRepository.findOne({
       where: { id },
@@ -239,10 +204,6 @@ export class LessonsService {
     return lesson;
   }
 
-  /**
-   * Retrieve all lessons for a specific teacher
-   * @param teacherId - Teacher UUID
-   */
   async findLessonsByTeacher(teacherId: string): Promise<Lesson[]> {
     return this.lessonsRepository.find({
       where: { teacherId },
@@ -251,10 +212,6 @@ export class LessonsService {
     });
   }
 
-  /**
-   * Retrieve all lessons for a specific student
-   * @param studentId - Student UUID
-   */
   async findLessonsByStudent(studentId: string): Promise<Lesson[]> {
     return this.lessonsRepository.find({
       where: { studentId },
@@ -263,10 +220,6 @@ export class LessonsService {
     });
   }
 
-  /**
-   * Confirm a pending lesson (teacher action)
-   * Transition: pending → confirmed
-   */
   async confirmLesson(id: string): Promise<Lesson> {
     const lesson = await this.findLessonById(id);
 
@@ -283,10 +236,6 @@ export class LessonsService {
     }
   }
 
-  /**
-   * Reject a pending lesson (teacher action)
-   * Transition: pending → cancelled
-   */
   async rejectLesson(id: string): Promise<Lesson> {
     const lesson = await this.findLessonById(id);
 
@@ -303,10 +252,6 @@ export class LessonsService {
     }
   }
 
-  /**
-   * Complete a confirmed lesson
-   * Transition: confirmed → completed
-   */
   async completeLesson(id: string): Promise<Lesson> {
     const lesson = await this.findLessonById(id);
 
@@ -323,9 +268,6 @@ export class LessonsService {
     }
   }
 
-  /**
-   * Cancel a lesson (any status → cancelled)
-   */
   async cancelLesson(id: string): Promise<Lesson> {
     const lesson = await this.findLessonById(id);
 
@@ -346,20 +288,11 @@ export class LessonsService {
     }
   }
 
-  /**
-   * Delete a lesson (hard delete)
-   * @param id - Lesson UUID
-   */
   async deleteLesson(id: string): Promise<void> {
     const lesson = await this.findLessonById(id);
     await this.lessonsRepository.remove(lesson);
   }
 
-  /**
-   * Update lesson status with validation
-   * @param id - Lesson UUID
-   * @param updateLessonStatusDto - New status
-   */
   async updateLessonStatus(
     id: string,
     updateLessonStatusDto: UpdateLessonStatusDto,
@@ -379,10 +312,6 @@ export class LessonsService {
     }
   }
 
-  /**
-   * Validate status transition rules
-   * Prevents invalid status changes
-   */
   private validateStatusTransition(
     currentStatus: LessonStatus,
     newStatus: LessonStatus,
@@ -417,9 +346,6 @@ export class LessonsService {
     }
   }
 
-  /**
-   * Handle database errors with appropriate exception types
-   */
   private handleDatabaseError(error: unknown, message: string): never {
     if (error instanceof QueryFailedError) {
       throw new BadRequestException(message);

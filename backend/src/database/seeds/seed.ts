@@ -6,7 +6,6 @@ import { Student } from '../../entities/student.entity';
 import { Lesson, LessonStatus } from '../../entities/lesson.entity';
 import { Instrument } from '../../entities/instrument.enum';
 
-// Dynamic import for ESM module
 let faker: any;
 
 type SeedResult = {
@@ -32,7 +31,6 @@ async function clearTables(): Promise<void> {
   await runner.connect();
   try {
     await runner.startTransaction();
-    // Order matters. TRUNCATE with CASCADE ensures FK integrity.
     await runner.query('TRUNCATE TABLE "lessons" RESTART IDENTITY CASCADE');
     await runner.query(
       'TRUNCATE TABLE "teacher_students" RESTART IDENTITY CASCADE',
@@ -90,14 +88,12 @@ async function assignTeachers(
 ): Promise<void> {
   const studentRepo = dataSource.getRepository(Student);
   for (const student of students) {
-    // Students can have 1-3 teachers, preferably matching their instrument
     const numTeachers = faker.helpers.weightedArrayElement([
       { weight: 5, value: 1 },
       { weight: 3, value: 2 },
       { weight: 2, value: 3 },
     ]);
 
-    // Prefer teachers with matching instrument, but also include variety
     const matchingTeachers = teachers.filter(
       (t) => t.instrument === student.instrument,
     );
@@ -107,12 +103,10 @@ async function assignTeachers(
 
     const selectedTeachers: Teacher[] = [];
 
-    // Always include at least one matching teacher if available
     if (matchingTeachers.length > 0 && numTeachers > 0) {
       selectedTeachers.push(pickOne(matchingTeachers));
     }
 
-    // Fill remaining slots with random teachers
     const remainingSlots = numTeachers - selectedTeachers.length;
     const availableTeachers = [
       ...matchingTeachers.filter((t) => !selectedTeachers.includes(t)),
@@ -131,16 +125,13 @@ function generateLessonWindows(): Array<{ start: Date; end: Date }> {
   const base = new Date();
   base.setHours(0, 0, 0, 0);
 
-  // Generate lesson windows for the next 30 days
   for (let d = 0; d < 30; d++) {
     const dayDate = new Date(base);
     dayDate.setDate(base.getDate() + d);
 
-    // Skip weekends
     const dayOfWeek = dayDate.getDay();
     if (dayOfWeek === 0 || dayOfWeek === 6) continue;
 
-    // Generate 2-5 lessons per day between 9 AM and 7 PM
     const numLessons = getRandomInt(2, 5);
     const startHour = 9;
     const endHour = 19;
@@ -156,7 +147,6 @@ function generateLessonWindows(): Array<{ start: Date; end: Date }> {
       const duration = pickOne(durationOptions);
       const end = addMinutes(start, duration);
 
-      // Ensure lesson doesn't go past 7 PM
       if (end.getHours() <= 19) {
         windows.push({ start, end });
       }
@@ -176,11 +166,9 @@ async function seedLessons(
   const usedWindows = new Set<number>();
 
   for (let i = 0; i < targetCount && i < windows.length; i++) {
-    // Pick a random teacher and student
     const teacher = pickOne(teachers);
     const student = pickOne(students);
 
-    // Ensure student is assigned to teacher (or assign if not)
     if (
       !student.teachers ||
       !student.teachers.some((t) => t.id === teacher.id)
@@ -193,7 +181,6 @@ async function seedLessons(
       await studentRepo.save(student);
     }
 
-    // Pick an unused window
     let windowIndex: number;
     do {
       windowIndex = getRandomInt(0, windows.length - 1);
@@ -203,32 +190,25 @@ async function seedLessons(
     const w = windows[windowIndex]!;
     const { start, end } = w;
 
-    // Determine status and creator based on date
     const now = new Date();
     let status: LessonStatus;
     let createdBy: 'teacher' | 'student';
 
     if (end < now) {
-      // Past lessons - mostly completed, some cancelled
       status = faker.helpers.weightedArrayElement([
         { weight: 8, value: LessonStatus.COMPLETED },
         { weight: 2, value: LessonStatus.CANCELLED },
       ]);
-      // Past lessons could be created by either
       createdBy = faker.helpers.arrayElement(['teacher', 'student'] as const);
     } else if (start < now) {
-      // Currently ongoing - should be confirmed
       status = LessonStatus.CONFIRMED;
-      // Confirmed lessons could be created by either
       createdBy = faker.helpers.arrayElement(['teacher', 'student'] as const);
     } else {
-      // Future lessons - mix of pending and confirmed
       const futureStatus = faker.helpers.weightedArrayElement([
         { weight: 3, value: LessonStatus.PENDING },
         { weight: 7, value: LessonStatus.CONFIRMED },
       ]);
       status = futureStatus;
-      // Pending = always student-created, Confirmed = teacher-created or student-confirmed
       if (status === LessonStatus.PENDING) {
         createdBy = 'student';
       } else {
@@ -251,7 +231,6 @@ async function seedLessons(
 }
 
 async function runSeed(): Promise<SeedResult> {
-  // Initialize faker with dynamic import
   const fakerModule = await import('@faker-js/faker');
   faker = fakerModule.faker;
   await dataSource.initialize();
