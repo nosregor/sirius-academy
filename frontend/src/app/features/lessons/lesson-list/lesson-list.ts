@@ -12,7 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DatePipe } from '@angular/common';
+import { DatePipe, LowerCasePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { LessonsService, Lesson, LessonStatus } from '../services/lessons.service';
 import { StudentsService, Student } from '../../students/services/students.service';
@@ -53,6 +53,7 @@ export interface GroupedLessons {
     MatTableModule,
     MatTooltipModule,
     DatePipe,
+    LowerCasePipe,
     LoadingSpinner,
     LessonCard,
   ],
