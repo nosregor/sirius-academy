@@ -15,6 +15,7 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { Teacher } from '@entities/teacher.entity';
 import { Student } from '@entities/student.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 /**
  * TeachersController
@@ -22,6 +23,7 @@ import { Student } from '@entities/student.entity';
  * Handles HTTP requests for teacher-related operations
  * Implements RESTful API endpoints with explicit status codes
  */
+@ApiTags('Teachers')
 @Controller('teachers')
 export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}

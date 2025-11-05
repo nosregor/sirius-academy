@@ -1,5 +1,6 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { LessonStatus } from '@entities/lesson.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 /**
  * Data Transfer Object for updating lesson status
@@ -15,6 +16,7 @@ export class UpdateLessonStatusDto {
    * New status for the lesson
    * Must be a valid LessonStatus enum value
    */
+  @ApiProperty({ enum: ['pending', 'confirmed', 'cancelled', 'completed'] })
   @IsNotEmpty({ message: 'Status is required' })
   @IsEnum(LessonStatus, {
     message: 'Status must be one of: pending, confirmed, cancelled, completed',

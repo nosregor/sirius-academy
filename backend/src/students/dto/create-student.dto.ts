@@ -10,6 +10,7 @@ import {
   VALIDATION_RULES,
   VALIDATION_MESSAGES,
 } from '@common/constants/validation.constants';
+import { ApiProperty } from '@nestjs/swagger';
 
 /**
  * Data Transfer Object for creating a new student
@@ -22,6 +23,7 @@ export class CreateStudentDto {
    * Student's first name
    * Must be 2-100 characters, letters, spaces, hyphens, and apostrophes only
    */
+  @ApiProperty({ example: 'Jane' })
   @Transform(({ value }) => value?.trim())
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.FIRST_NAME_REQUIRED })
@@ -36,6 +38,7 @@ export class CreateStudentDto {
    * Student's last name
    * Must be 2-100 characters, letters, spaces, hyphens, and apostrophes only
    */
+  @ApiProperty({ example: 'Smith' })
   @Transform(({ value }) => value?.trim())
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.LAST_NAME_REQUIRED })
@@ -51,6 +54,7 @@ export class CreateStudentDto {
    * Will be hashed before storage using bcrypt
    * Must be 8-64 characters with at least one uppercase, lowercase, and digit
    */
+  @ApiProperty({ example: 'P@ssword123' })
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.PASSWORD_REQUIRED })
   @MinLength(VALIDATION_RULES.PASSWORD_MIN_LENGTH)
@@ -64,6 +68,7 @@ export class CreateStudentDto {
    * Primary instrument the student wants to learn
    * e.g., "Piano", "Guitar", "Violin", "Voice"
    */
+  @ApiProperty({ example: 'Guitar' })
   @Transform(({ value }) => value?.trim())
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.INSTRUMENT_REQUIRED })

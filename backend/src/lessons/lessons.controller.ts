@@ -15,6 +15,7 @@ import { LessonsService } from './lessons.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonStatusDto } from './dto/update-lesson-status.dto';
 import { Lesson, LessonStatus } from '@entities/lesson.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 /**
  * LessonsController
@@ -22,6 +23,7 @@ import { Lesson, LessonStatus } from '@entities/lesson.entity';
  * Handles HTTP requests for lesson-related operations
  * Implements RESTful API endpoints with explicit status codes
  */
+@ApiTags('Lessons')
 @Controller('lessons')
 export class LessonsController {
   constructor(private readonly lessonsService: LessonsService) {}

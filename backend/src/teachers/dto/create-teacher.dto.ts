@@ -13,6 +13,7 @@ import {
   VALIDATION_RULES,
   VALIDATION_MESSAGES,
 } from '@common/constants/validation.constants';
+import { ApiProperty } from '@nestjs/swagger';
 
 /**
  * Data Transfer Object for creating teacher entities
@@ -25,6 +26,7 @@ export class CreateTeacherDto {
    * Teacher's first name
    * Must be 2-100 characters, letters, spaces, hyphens, and apostrophes only
    */
+  @ApiProperty({ example: 'John' })
   @Transform(({ value }) => value?.trim())
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.FIRST_NAME_REQUIRED })
@@ -39,6 +41,7 @@ export class CreateTeacherDto {
    * Teacher's last name
    * Must be 2-100 characters, letters, spaces, hyphens, and apostrophes only
    */
+  @ApiProperty({ example: 'Doe' })
   @Transform(({ value }) => value?.trim())
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.LAST_NAME_REQUIRED })
@@ -54,6 +57,7 @@ export class CreateTeacherDto {
    * Will be hashed before storage using bcrypt
    * Must be 8-64 characters with at least one uppercase, lowercase, and digit
    */
+  @ApiProperty({ example: 'P@ssword123' })
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.PASSWORD_REQUIRED })
   @MinLength(VALIDATION_RULES.PASSWORD_MIN_LENGTH)
@@ -67,6 +71,7 @@ export class CreateTeacherDto {
    * Primary instrument the teacher teaches
    * e.g., "Piano", "Guitar", "Violin", "Voice"
    */
+  @ApiProperty({ example: 'Piano' })
   @Transform(({ value }) => value?.trim())
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.INSTRUMENT_REQUIRED })
@@ -78,6 +83,7 @@ export class CreateTeacherDto {
    * Years of teaching experience
    * Must be between 0 and 80 years
    */
+  @ApiProperty({ example: 5, minimum: 0, maximum: 80 })
   @IsInt()
   @Min(VALIDATION_RULES.EXPERIENCE_MIN_YEARS)
   @Max(VALIDATION_RULES.EXPERIENCE_MAX_YEARS)
