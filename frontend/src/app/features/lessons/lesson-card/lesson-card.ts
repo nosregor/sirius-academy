@@ -3,7 +3,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { Lesson, LessonStatus } from '../services/lessons.service';
 
 /**
@@ -14,7 +14,7 @@ import { Lesson, LessonStatus } from '../services/lessons.service';
  */
 @Component({
   selector: 'app-lesson-card',
-  imports: [MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, DatePipe],
+  imports: [MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, DatePipe, NgClass],
   templateUrl: './lesson-card.html',
   styleUrl: './lesson-card.scss',
 })
