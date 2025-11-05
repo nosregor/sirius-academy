@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 /**
  * Bootstrap the NestJS application
@@ -34,6 +35,20 @@ async function bootstrap(): Promise<void> {
 
   // Global exception filter
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // Swagger (enabled by default in non-production or when SWAGGER_ENABLED=true)
+  const enableSwagger = process.env.SWAGGER_ENABLED === 'true' || process.env.NODE_ENV !== 'production';
+  if (enableSwagger) {
+    const config = new DocumentBuilder()
+      .setTitle('Sirius Academy API')
+      .setDescription('API documentation for Sirius Academy')
+      .setVersion('1.0.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+    console.log('📘 Swagger UI available at /api/docs');
+  }
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
