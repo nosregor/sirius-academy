@@ -127,6 +127,56 @@ mat-card-content {
   }
 }
 
+.date-group {
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .date-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    margin-bottom: 8px;
+
+    mat-icon {
+      color: #1976d2;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.87);
+      flex: 1;
+    }
+
+    .lesson-count {
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.6);
+      background-color: #f5f5f5;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+  }
+
+  mat-divider {
+    margin-bottom: 16px;
+  }
+
+  .date-group-lessons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 16px;
+  }
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;

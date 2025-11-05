@@ -131,15 +131,27 @@
       </div>
     } @else {
       <div class="lessons-container">
-        @for (lesson of lessons(); track lesson.id) {
-          <app-lesson-card
-            [lesson]="lesson"
-            (confirm)="onConfirm($event)"
-            (reject)="onReject($event)"
-            (complete)="onComplete($event)"
-            (cancel)="onCancel($event)"
-            (delete)="onDelete($event)"
-          />
+        @for (group of groupedLessons(); track group.date) {
+          <div class="date-group">
+            <div class="date-header">
+              <mat-icon>calendar_today</mat-icon>
+              <h3>{{ group.displayDate }}</h3>
+              <span class="lesson-count">{{ group.lessons.length }} lesson(s)</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="date-group-lessons">
+              @for (lesson of group.lessons; track lesson.id) {
+                <app-lesson-card
+                  [lesson]="lesson"
+                  (confirm)="onConfirm($event)"
+                  (reject)="onReject($event)"
+                  (complete)="onComplete($event)"
+                  (cancel)="onCancel($event)"
+                  (delete)="onDelete($event)"
+                />
+              }
+            </div>
+          </div>
         }
       </div>
     }

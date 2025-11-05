@@ -44,24 +44,7 @@ export class StudentForm implements OnInit {
   isSaving = signal<boolean>(false);
   studentId: string | null = null;
 
-  readonly instrumentOptions = [
-    'Piano',
-    'Guitar',
-    'Violin',
-    'Viola',
-    'Cello',
-    'Bass',
-    'Drums',
-    'Flute',
-    'Clarinet',
-    'Saxophone',
-    'Trumpet',
-    'Trombone',
-    'Voice',
-    'Harp',
-    'Ukulele',
-    'Organ',
-  ];
+  readonly instrumentOptions = ['Piano', 'Guitar', 'Bass', 'Drums', 'Voice', 'Ukulele'];
 
   ngOnInit(): void {
     this.initializeForm();

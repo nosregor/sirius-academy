@@ -8,6 +8,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { LessonsService, Lesson, LessonStatus } from '../services/lessons.service';
 import { StudentsService, Student } from '../../students/services/students.service';
@@ -18,6 +20,12 @@ import {
   ConfirmDialog,
   ConfirmDialogData,
 } from '../../../shared/components/confirm-dialog/confirm-dialog';
+
+export interface GroupedLessons {
+  date: string;
+  displayDate: string;
+  lessons: Lesson[];
+}
 
 /**
  * LessonList
@@ -37,6 +45,8 @@ import {
     MatSnackBarModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatDividerModule,
+    DatePipe,
     LoadingSpinner,
     LessonCard,
   ],
@@ -53,6 +63,7 @@ export class LessonList implements OnInit {
   private readonly router = inject(Router);
 
   lessons = signal<Lesson[]>([]);
+  groupedLessons = signal<GroupedLessons[]>([]);
   allLessons = signal<Lesson[]>([]);
   teachers = signal<Teacher[]>([]);
   students = signal<Student[]>([]);
@@ -124,6 +135,10 @@ export class LessonList implements OnInit {
         filteredLessons = this.sortLessons(filteredLessons);
 
         this.lessons.set(filteredLessons);
+        
+        // Group lessons by date
+        this.groupedLessons.set(this.groupLessonsByDate(filteredLessons));
+        
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -182,6 +197,46 @@ export class LessonList implements OnInit {
       default:
         return sorted;
     }
+  }
+
+  private groupLessonsByDate(lessons: Lesson[]): GroupedLessons[] {
+    const groups = new Map<string, Lesson[]>();
+
+    // Group lessons by date
+    lessons.forEach((lesson) => {
+      const date = new Date(lesson.startTime).toISOString().split('T')[0];
+      if (!groups.has(date)) {
+        groups.set(date, []);
+      }
+      groups.get(date)!.push(lesson);
+    });
+
+    // Convert to array and add display dates
+    const result: GroupedLessons[] = [];
+    const today = new Date().toISOString().split('T')[0];
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+    groups.forEach((lessons, date) => {
+      let displayDate = date;
+      if (date === today) {
+        displayDate = `Today - ${date}`;
+      } else if (date === tomorrow) {
+        displayDate = `Tomorrow - ${date}`;
+      } else {
+        const dateObj = new Date(date);
+        const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+        displayDate = `${dayName} - ${date}`;
+      }
+
+      result.push({
+        date,
+        displayDate,
+        lessons,
+      });
+    });
+
+    // Sort groups by date (descending by default)
+    return result.sort((a, b) => b.date.localeCompare(a.date));
   }
 
   onCreateLesson(): void {
