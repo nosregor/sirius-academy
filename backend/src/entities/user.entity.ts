@@ -40,6 +40,7 @@ export class User {
   @Column({ type: 'varchar', length: 255, select: false })
   password!: string;
 
+  @Index()
   @Column({
     type: 'enum',
     enum: UserRole,

@@ -7,6 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
   Check,
+  Index,
 } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { Student } from './student.entity';
@@ -32,6 +33,8 @@ export enum LessonStatus {
   `EXTRACT(EPOCH FROM ("end_time" - "start_time")) >= 900 AND EXTRACT(EPOCH FROM ("end_time" - "start_time")) <= 14400`,
 )
 @Check(`EXTRACT(MINUTE FROM "start_time") % 15 = 0`)
+@Index(['teacherId', 'startTime'])
+@Index(['studentId', 'startTime'])
 export class Lesson {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -48,6 +51,7 @@ export class Lesson {
   @Column({ type: 'timestamp', name: 'end_time' })
   endTime!: Date;
 
+  @Index()
   @Column({
     type: 'enum',
     enum: LessonStatus,
