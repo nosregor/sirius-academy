@@ -67,20 +67,52 @@ export class LessonForm implements OnInit {
 
   readonly minDate = new Date();
 
+  readonly hourOptions = Array.from({ length: 24 }, (_, i) => ({
+    value: i,
+    label: i.toString().padStart(2, '0'),
+  }));
+
+  readonly minuteOptions = [0, 15, 30, 45].map((value) => ({
+    value,
+    label: value.toString().padStart(2, '0'),
+  }));
+
   ngOnInit(): void {
     this.initializeForm();
     this.loadData();
   }
 
   private initializeForm(): void {
+    const now = new Date();
+    let defaultHour = now.getHours();
+    let defaultMinute = Math.ceil(now.getMinutes() / 15) * 15; // Round up to nearest 15 minutes
+
+    // Handle minute overflow
+    if (defaultMinute >= 60) {
+      defaultMinute = 0;
+      defaultHour = (defaultHour + 1) % 24;
+    }
+
     this.lessonForm = this.fb.group({
       teacherId: ['', Validators.required],
       studentId: ['', Validators.required],
       startDate: ['', Validators.required],
-      startTime: ['', [Validators.required, this.timeSlotValidator]],
+      startHour: [defaultHour, Validators.required],
+      startMinute: [defaultMinute, Validators.required],
       duration: [60, [Validators.required, Validators.min(15), Validators.max(240)]],
       creatorRole: ['teacher', Validators.required],
     });
+
+    // Update startTime when hour or minute changes
+    this.lessonForm.get('startHour')?.valueChanges.subscribe(() => this.updateStartTime());
+    this.lessonForm.get('startMinute')?.valueChanges.subscribe(() => this.updateStartTime());
+  }
+
+  private updateStartTime(): void {
+    const hour = this.lessonForm.get('startHour')?.value ?? 0;
+    const minute = this.lessonForm.get('startMinute')?.value ?? 0;
+    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    this.lessonForm.patchValue({ startTime: timeString }, { emitEvent: false });
   }
 
   private loadData(): void {
@@ -123,8 +155,11 @@ export class LessonForm implements OnInit {
     this.isSaving.set(true);
     const formValue = this.lessonForm.value;
 
+    // Build time string from hour and minute
+    const timeString = `${formValue.startHour.toString().padStart(2, '0')}:${formValue.startMinute.toString().padStart(2, '0')}`;
+
     // Combine date and time
-    const startDateTime = this.combineDateAndTime(formValue.startDate, formValue.startTime);
+    const startDateTime = this.combineDateAndTime(formValue.startDate, timeString);
     const endDateTime = new Date(startDateTime.getTime() + formValue.duration * 60 * 1000);
 
     const createDto = {

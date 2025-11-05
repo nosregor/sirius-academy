@@ -41,12 +41,7 @@
         <div class="form-row">
           <mat-form-field class="full-width">
             <mat-label>Date</mat-label>
-            <input
-              matInput
-              [matDatepicker]="picker"
-              [min]="minDate"
-              formControlName="startDate"
-            />
+            <input matInput [matDatepicker]="picker" [min]="minDate" formControlName="startDate" />
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
             @if (getErrorMessage('startDate')) {
@@ -55,14 +50,34 @@
             <mat-hint>Select a date from today onwards</mat-hint>
           </mat-form-field>
 
-          <mat-form-field class="full-width">
-            <mat-label>Start Time</mat-label>
-            <input matInput type="time" step="900" formControlName="startTime" />
-            @if (getErrorMessage('startTime')) {
-              <mat-error>{{ getErrorMessage('startTime') }}</mat-error>
-            }
-            <mat-hint>Must be in 15-minute intervals (e.g., 09:00, 09:15, 09:30)</mat-hint>
-          </mat-form-field>
+          <div class="time-picker-row">
+            <mat-form-field class="time-picker-field">
+              <mat-label>Hour</mat-label>
+              <mat-select formControlName="startHour">
+                @for (hour of hourOptions; track hour.value) {
+                  <mat-option [value]="hour.value">{{ hour.label }}</mat-option>
+                }
+              </mat-select>
+              @if (getErrorMessage('startHour')) {
+                <mat-error>{{ getErrorMessage('startHour') }}</mat-error>
+              }
+            </mat-form-field>
+
+            <span class="time-separator">:</span>
+
+            <mat-form-field class="time-picker-field">
+              <mat-label>Minute</mat-label>
+              <mat-select formControlName="startMinute">
+                @for (minute of minuteOptions; track minute.value) {
+                  <mat-option [value]="minute.value">{{ minute.label }}</mat-option>
+                }
+              </mat-select>
+              @if (getErrorMessage('startMinute')) {
+                <mat-error>{{ getErrorMessage('startMinute') }}</mat-error>
+              }
+              <mat-hint>Time must be in 15-minute intervals</mat-hint>
+            </mat-form-field>
+          </div>
         </div>
 
         <div class="form-row">
