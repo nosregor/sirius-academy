@@ -1,11 +1,24 @@
-# Nestjs specific
-/dist
-/node_modules
-/build
-/tmp
+# ----------------------------
+# Root
+# ----------------------------
+node_modules/
+bun.lockb
+dist/
+build/
+tmp/
+temp/
+.cache/
+
+# Environment variables (backend + frontend)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+!.env.example
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -13,12 +26,69 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# dotenv environment variable files
-.env
-.env.development
-.env.test
-.env.production
+# TypeScript build info
+*.tsbuildinfo
 
-# temp directory
-.temp
-.tmp
+# Coverage reports
+coverage/
+.nyc_output/
+
+# ----------------------------
+# Backend (NestJS)
+# ----------------------------
+backend/node_modules/
+backend/dist/
+backend/tmp/
+backend/build/
+backend/coverage/
+backend/.env
+backend/*.tsbuildinfo
+
+# ----------------------------
+# Frontend (Angular)
+# ----------------------------
+frontend/node_modules/
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+frontend/.angular/
+frontend/.env
+frontend/coverage/
+frontend/src/environments/environment*.ts
+
+# ----------------------------
+# Editor / OS
+# ----------------------------
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ----------------------------
+# Temporary or generated folders
+# ----------------------------
+.tmp/
+.temp/
+
+# ----------------------------
+# Database
+# ----------------------------
+*.sqlite
+*.sqlite3
+*.db
+
+# ----------------------------
+# Docker
+# ----------------------------
+docker-compose.override.yml
+
+.cursor/
+.cursorrules
+USER_STORIES.md
+/tasks
+
+
+
