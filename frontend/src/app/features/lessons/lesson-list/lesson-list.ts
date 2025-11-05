@@ -53,6 +53,7 @@ export class LessonList implements OnInit {
   private readonly router = inject(Router);
 
   lessons = signal<Lesson[]>([]);
+  allLessons = signal<Lesson[]>([]);
   teachers = signal<Teacher[]>([]);
   students = signal<Student[]>([]);
   isLoading = signal<boolean>(true);
@@ -95,6 +96,9 @@ export class LessonList implements OnInit {
 
     this.lessonsService.getAllLessons(status as LessonStatus, teacherId, studentId).subscribe({
       next: (lessons) => {
+        // Store all lessons for stats
+        this.allLessons.set(lessons);
+
         let filteredLessons = lessons;
 
         // Filter by date if selected
@@ -225,5 +229,12 @@ export class LessonList implements OnInit {
   getStudentName(studentId: string): string {
     const student = this.students().find((s) => s.id === studentId);
     return student ? `${student.firstName} ${student.lastName}` : '';
+  }
+
+  getStatCount(status: string): number {
+    if (status === 'total') {
+      return this.allLessons().length;
+    }
+    return this.allLessons().filter((lesson) => lesson.status === status).length;
   }
 }

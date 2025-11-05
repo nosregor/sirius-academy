@@ -13,6 +13,99 @@ mat-card-content {
   padding: 16px;
 }
 
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &.pending {
+      border-left: 4px solid #e65100;
+    }
+
+    &.confirmed {
+      border-left: 4px solid #1565c0;
+    }
+
+    &.completed {
+      border-left: 4px solid #2e7d32;
+    }
+
+    &.total {
+      border-left: 4px solid #757575;
+    }
+
+    .stat-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      flex-shrink: 0;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    &.pending .stat-icon {
+      background-color: #fff3e0;
+      color: #e65100;
+    }
+
+    &.confirmed .stat-icon {
+      background-color: #e3f2fd;
+      color: #1565c0;
+    }
+
+    &.completed .stat-icon {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    &.total .stat-icon {
+      background-color: #f5f5f5;
+      color: #757575;
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
 .filters {
   display: flex;
   gap: 16px;

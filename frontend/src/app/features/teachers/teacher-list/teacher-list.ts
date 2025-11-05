@@ -13,6 +13,10 @@ import {
   ConfirmDialog,
   ConfirmDialogData,
 } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import {
+  TeacherStudentsDialog,
+  TeacherStudentsDialogData,
+} from '../teacher-students-dialog/teacher-students-dialog';
 
 /**
  * TeacherList
@@ -77,12 +81,15 @@ export class TeacherList implements OnInit {
   onViewStudents(teacher: Teacher): void {
     this.teachersService.getStudentsByTeacher(teacher.id).subscribe({
       next: (students: Student[]) => {
-        const studentNames =
-          students.length > 0
-            ? students.map((s) => `${s.firstName} ${s.lastName}`).join(', ')
-            : 'No students assigned';
+        const dialogData: TeacherStudentsDialogData = {
+          teacherName: `${teacher.firstName} ${teacher.lastName}`,
+          students,
+        };
 
-        this.snackBar.open(`Students: ${studentNames}`, 'Close', { duration: 5000 });
+        this.dialog.open(TeacherStudentsDialog, {
+          width: '600px',
+          data: dialogData,
+        });
       },
       error: (error) => {
         console.error('Error loading students:', error);

@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Students of {{ data.teacherName }}</h2>
+
+<mat-dialog-content>
+  <div class="students-section">
+    <h3>Assigned Students ({{ data.students.length }})</h3>
+    @if (data.students.length === 0) {
+      <p class="empty-message">No students assigned to this teacher yet</p>
+    } @else {
+      <mat-list>
+        @for (student of data.students; track student.id) {
+          <mat-list-item>
+            <span matListItemTitle>{{ getStudentName(student) }}</span>
+            <span matListItemLine>{{ student.instrument }}</span>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="onClose()">Done</button>
+</mat-dialog-actions>
