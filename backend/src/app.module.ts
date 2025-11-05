@@ -33,7 +33,10 @@ import { AppService } from './app.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const config = configService.get('database');
+        const config =
+          configService.get<import('@nestjs/typeorm').TypeOrmModuleOptions>(
+            'database',
+          );
         if (!config) {
           throw new Error('Database configuration not found');
         }

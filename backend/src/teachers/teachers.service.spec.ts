@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository, IsNull } from 'typeorm';
 import { Teacher } from '@entities/teacher.entity';
 import { TeachersService } from './teachers.service';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
@@ -53,7 +53,7 @@ describe('TeachersService', () => {
     const result = await service.findAllTeachers();
 
     expect(repository.find).toHaveBeenCalledWith({
-      where: { deletedAt: expect.any(Object) },
+      where: { deletedAt: IsNull() },
       order: { lastName: 'ASC', firstName: 'ASC' },
       relations: ['students'],
     });
@@ -67,7 +67,7 @@ describe('TeachersService', () => {
     const result = await service.findTeacherById('teacher-id');
 
     expect(repository.findOne).toHaveBeenCalledWith({
-      where: { id: 'teacher-id', deletedAt: expect.any(Object) },
+      where: { id: 'teacher-id', deletedAt: IsNull() },
       relations: ['students'],
     });
     expect(result).toBe(teacher);
@@ -76,9 +76,14 @@ describe('TeachersService', () => {
   it('should throw NotFoundException when teacher not found', async () => {
     jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-    await expect(service.findTeacherById('missing-id')).rejects.toThrow(
-      'Teacher with id missing-id not found',
-    );
+    try {
+      await service.findTeacherById('missing-id');
+      fail('Expected findTeacherById to throw NotFoundException');
+    } catch (error: unknown) {
+      expect((error as Error).message).toBe(
+        'Teacher with id missing-id not found',
+      );
+    }
   });
 
   it('should update teacher details and return updated entity', async () => {
@@ -135,9 +140,12 @@ describe('TeachersService', () => {
     const queryError = new QueryFailedError('', [], new Error());
     jest.spyOn(repository, 'save').mockRejectedValueOnce(queryError);
 
-    expect(service.createTeacher(dto as any)).rejects.toThrow(
-      'Failed to create teacher',
-    );
+    try {
+      await service.createTeacher(dto as any);
+      fail('Expected createTeacher to throw BadRequestException');
+    } catch (error: unknown) {
+      expect((error as Error).message).toBe('Failed to create teacher');
+    }
   });
 
   it('should throw BadRequestException when updateTeacher fails to persist', async () => {
@@ -179,7 +187,7 @@ describe('TeachersService', () => {
     const result = await service.findStudentsByTeacher('teacher-id');
 
     expect(repository.findOne).toHaveBeenCalledWith({
-      where: { id: 'teacher-id', deletedAt: expect.any(Object) },
+      where: { id: 'teacher-id', deletedAt: IsNull() },
       relations: ['students'],
     });
     expect(result).toEqual([student]);
@@ -188,8 +196,13 @@ describe('TeachersService', () => {
   it('should throw NotFoundException when retrieving students for a missing teacher', async () => {
     jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-    await expect(service.findStudentsByTeacher('missing-id')).rejects.toThrow(
-      'Teacher with id missing-id not found',
-    );
+    try {
+      await service.findStudentsByTeacher('missing-id');
+      fail('Expected findStudentsByTeacher to throw NotFoundException');
+    } catch (error: unknown) {
+      expect((error as Error).message).toBe(
+        'Teacher with id missing-id not found',
+      );
+    }
   });
 });

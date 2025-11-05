@@ -17,7 +17,7 @@ export class IsValidTimeSlotConstraint implements ValidatorConstraintInterface {
       return false;
     }
 
-    const date = value as Date;
+    const date = value;
 
     // Check minutes are on 15-minute increments
     if (date.getMinutes() % 15 !== 0) {

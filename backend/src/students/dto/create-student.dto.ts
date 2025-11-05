@@ -24,7 +24,9 @@ export class CreateStudentDto {
    * Must be 2-100 characters, letters, spaces, hyphens, and apostrophes only
    */
   @ApiProperty({ example: 'Jane' })
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.FIRST_NAME_REQUIRED })
   @MinLength(VALIDATION_RULES.NAME_MIN_LENGTH)
@@ -39,7 +41,9 @@ export class CreateStudentDto {
    * Must be 2-100 characters, letters, spaces, hyphens, and apostrophes only
    */
   @ApiProperty({ example: 'Smith' })
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.LAST_NAME_REQUIRED })
   @MinLength(VALIDATION_RULES.NAME_MIN_LENGTH)
@@ -69,7 +73,9 @@ export class CreateStudentDto {
    * e.g., "Piano", "Guitar", "Violin", "Voice"
    */
   @ApiProperty({ example: 'Guitar' })
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @IsString()
   @IsNotEmpty({ message: VALIDATION_MESSAGES.INSTRUMENT_REQUIRED })
   @MinLength(VALIDATION_RULES.INSTRUMENT_MIN_LENGTH)
