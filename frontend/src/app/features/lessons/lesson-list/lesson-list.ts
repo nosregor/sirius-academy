@@ -9,6 +9,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { LessonsService, Lesson, LessonStatus } from '../services/lessons.service';
@@ -46,6 +49,9 @@ export interface GroupedLessons {
     MatDatepickerModule,
     MatNativeDateModule,
     MatDividerModule,
+    MatButtonToggleModule,
+    MatTableModule,
+    MatTooltipModule,
     DatePipe,
     LoadingSpinner,
     LessonCard,
@@ -74,6 +80,17 @@ export class LessonList implements OnInit {
   selectedStudent = signal<string>('');
   selectedDate = signal<Date | null>(null);
   selectedSort = signal<string>('date-desc');
+  viewMode = signal<'cards' | 'table'>('cards');
+
+  readonly displayedColumns = [
+    'date',
+    'teacher',
+    'student',
+    'duration',
+    'status',
+    'createdBy',
+    'actions',
+  ];
 
   readonly statusOptions = [
     { value: '', label: 'All Statuses' },
@@ -135,10 +152,10 @@ export class LessonList implements OnInit {
         filteredLessons = this.sortLessons(filteredLessons);
 
         this.lessons.set(filteredLessons);
-        
+
         // Group lessons by date
         this.groupedLessons.set(this.groupLessonsByDate(filteredLessons));
-        
+
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -165,6 +182,22 @@ export class LessonList implements OnInit {
 
   onSortChange(): void {
     this.loadLessons();
+  }
+
+  onViewModeChange(mode: 'cards' | 'table'): void {
+    this.viewMode.set(mode);
+  }
+
+  getLessonDuration(lesson: Lesson): string {
+    const start = new Date(lesson.startTime);
+    const end = new Date(lesson.endTime);
+    const minutes = Math.round((end.getTime() - start.getTime()) / 60000);
+    if (minutes < 60) {
+      return `${minutes}min`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
   }
 
   private sortLessons(lessons: Lesson[]): Lesson[] {

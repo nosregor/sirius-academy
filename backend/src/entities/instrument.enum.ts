@@ -8,6 +8,5 @@ export enum Instrument {
   BASS = 'Bass',
   DRUMS = 'Drums',
   VOICE = 'Voice',
-  HARP = 'Harp',
   UKULELE = 'Ukulele',
 }

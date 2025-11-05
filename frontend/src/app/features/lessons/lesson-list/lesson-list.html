@@ -2,6 +2,20 @@
   <mat-card-header>
     <mat-card-title>Lessons Management</mat-card-title>
     <div class="spacer"></div>
+    <mat-button-toggle-group
+      [value]="viewMode()"
+      (change)="onViewModeChange($event.value)"
+      class="view-toggle"
+    >
+      <mat-button-toggle value="cards">
+        <mat-icon>grid_view</mat-icon>
+        Cards
+      </mat-button-toggle>
+      <mat-button-toggle value="table">
+        <mat-icon>view_list</mat-icon>
+        Table
+      </mat-button-toggle>
+    </mat-button-toggle-group>
     <button mat-raised-button color="primary" (click)="onCreateLesson()">
       <mat-icon>add</mat-icon>
       New Lesson
@@ -130,30 +144,144 @@
         </button>
       </div>
     } @else {
-      <div class="lessons-container">
-        @for (group of groupedLessons(); track group.date) {
-          <div class="date-group">
-            <div class="date-header">
-              <mat-icon>calendar_today</mat-icon>
-              <h3>{{ group.displayDate }}</h3>
-              <span class="lesson-count">{{ group.lessons.length }} lesson(s)</span>
+      @if (viewMode() === 'cards') {
+        <div class="lessons-container">
+          @for (group of groupedLessons(); track group.date) {
+            <div class="date-group">
+              <div class="date-header">
+                <mat-icon>calendar_today</mat-icon>
+                <h3>{{ group.displayDate }}</h3>
+                <span class="lesson-count">{{ group.lessons.length }} lesson(s)</span>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="date-group-lessons">
+                @for (lesson of group.lessons; track lesson.id) {
+                  <app-lesson-card
+                    [lesson]="lesson"
+                    (confirm)="onConfirm($event)"
+                    (reject)="onReject($event)"
+                    (complete)="onComplete($event)"
+                    (cancel)="onCancel($event)"
+                    (delete)="onDelete($event)"
+                  />
+                }
+              </div>
             </div>
-            <mat-divider></mat-divider>
-            <div class="date-group-lessons">
-              @for (lesson of group.lessons; track lesson.id) {
-                <app-lesson-card
-                  [lesson]="lesson"
-                  (confirm)="onConfirm($event)"
-                  (reject)="onReject($event)"
-                  (complete)="onComplete($event)"
-                  (cancel)="onCancel($event)"
-                  (delete)="onDelete($event)"
-                />
-              }
-            </div>
-          </div>
-        }
-      </div>
+          }
+        </div>
+      } @else {
+        <div class="table-container">
+          <table mat-table [dataSource]="lessons()" class="lessons-table">
+            <!-- Date Column -->
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date & Time</th>
+              <td mat-cell *matCellDef="let lesson">
+                {{ lesson.startTime | date: 'short' }}
+              </td>
+            </ng-container>
+
+            <!-- Teacher Column -->
+            <ng-container matColumnDef="teacher">
+              <th mat-header-cell *matHeaderCellDef>Teacher</th>
+              <td mat-cell *matCellDef="let lesson">
+                {{ getTeacherName(lesson.teacherId) }}
+              </td>
+            </ng-container>
+
+            <!-- Student Column -->
+            <ng-container matColumnDef="student">
+              <th mat-header-cell *matHeaderCellDef>Student</th>
+              <td mat-cell *matCellDef="let lesson">
+                {{ getStudentName(lesson.studentId) }}
+              </td>
+            </ng-container>
+
+            <!-- Duration Column -->
+            <ng-container matColumnDef="duration">
+              <th mat-header-cell *matHeaderCellDef>Duration</th>
+              <td mat-cell *matCellDef="let lesson">
+                {{ getLessonDuration(lesson) }}
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let lesson">
+                <span class="status-badge status-{{ lesson.status | lowercase }}">
+                  {{ lesson.status }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Created By Column -->
+            <ng-container matColumnDef="createdBy">
+              <th mat-header-cell *matHeaderCellDef>Created By</th>
+              <td mat-cell *matCellDef="let lesson">
+                <span class="creator-badge creator-{{ lesson.createdBy }}">
+                  {{ lesson.createdBy === 'teacher' ? 'Teacher' : 'Student' }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let lesson">
+                <div class="action-buttons">
+                  @if (lesson.status === 'pending') {
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="onConfirm(lesson.id)"
+                      matTooltip="Confirm"
+                    >
+                      <mat-icon>check</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="onReject(lesson.id)"
+                      matTooltip="Reject"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                  @if (lesson.status === 'confirmed') {
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="onComplete(lesson.id)"
+                      matTooltip="Complete"
+                    >
+                      <mat-icon>done_all</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="onCancel(lesson.id)"
+                      matTooltip="Cancel"
+                    >
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  }
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="onDelete(lesson.id)"
+                    matTooltip="Delete"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      }
     }
   </mat-card-content>
 </mat-card>
