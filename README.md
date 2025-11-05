@@ -382,41 +382,476 @@ npm run format
 
 ## 🎨 Design Decisions
 
+This section documents the key architectural and design decisions made during the development of Sirius Academy, explaining the rationale behind each choice.
+
 ### 1. Dual Lesson Workflow
 
-- **Teacher-created lessons**: Automatically set to `confirmed` status
-- **Student-requested lessons**: Set to `pending` status, requiring teacher confirmation
+**Decision**: Implement role-based lesson creation with different initial statuses.
+
+**Rationale**:
+
+- Teachers have scheduling authority and can directly create confirmed lessons
+- Students can request lessons but require teacher confirmation
+- Provides flexibility while maintaining teacher control over their schedule
+
+**Implementation**:
+
+- **Teacher-created lessons**: `creatorRole: 'teacher'` → Status automatically set to `confirmed`
+- **Student-requested lessons**: `creatorRole: 'student'` → Status set to `pending`, requiring teacher action
+- Status transitions are validated to ensure business rule compliance
+
+**Example**:
+
+```typescript
+// Teacher creates lesson → immediately confirmed
+POST /api/v1/lessons
+{
+  "teacherId": "...",
+  "studentId": "...",
+  "startTime": "2025-11-06T10:00:00Z",
+  "endTime": "2025-11-06T11:00:00Z",
+  "creatorRole": "teacher"  // → status: "confirmed"
+}
+
+// Student requests lesson → pending confirmation
+POST /api/v1/lessons
+{
+  "teacherId": "...",
+  "studentId": "...",
+  "startTime": "2025-11-06T10:00:00Z",
+  "endTime": "2025-11-06T11:00:00Z",
+  "creatorRole": "student"  // → status: "pending"
+}
+```
+
+**Benefits**:
+
+- Clear separation of responsibilities
+- Teachers maintain scheduling control
+- Students can request lessons without direct teacher availability
+- Audit trail of who created each lesson
+
+---
 
 ### 2. Time Slot Standardization
 
-- All lesson start times must be on 15-minute increments (:00, :15, :30, :45)
-- Minimum lesson duration: 15 minutes
-- Maximum lesson duration: 4 hours
-- Prevents scheduling conflicts and simplifies overlap detection
+**Decision**: Enforce 15-minute increments for lesson start times and 15 min - 4 hour duration limits.
+
+**Rationale**:
+
+- Standardizes scheduling and prevents arbitrary time slots
+- Simplifies overlap detection algorithms
+- Provides predictable scheduling windows
+- Prevents unrealistic lesson durations (too short or too long)
+
+**Implementation**:
+
+- **Time Slot Validation**: Start times must be on 15-minute boundaries (:00, :15, :30, :45)
+  - Database constraint: `CHECK (EXTRACT(MINUTE FROM "start_time") % 15 = 0)`
+  - Custom validator: `@IsValidTimeSlot()` decorator
+- **Duration Validation**: Lessons must be between 15 minutes and 4 hours
+  - Database constraint: `CHECK (EXTRACT(EPOCH FROM ("end_time" - "start_time")) >= 900 AND <= 14400)`
+  - Custom validator: `@IsValidLessonDuration()` decorator
+
+**Example**:
+
+```typescript
+// ✅ Valid: 15-minute increments
+startTime: "2025-11-06T10:00:00Z"  // 10:00 AM
+startTime: "2025-11-06T10:15:00Z"  // 10:15 AM
+startTime: "2025-11-06T10:30:00Z"  // 10:30 AM
+
+// ❌ Invalid: Not on 15-minute boundary
+startTime: "2025-11-06T10:07:00Z"  // Rejected
+
+// ✅ Valid durations
+15 minutes (minimum)
+60 minutes (1 hour)
+240 minutes (4 hours - maximum)
+
+// ❌ Invalid durations
+10 minutes (too short)
+300 minutes (5 hours - too long)
+```
+
+**Benefits**:
+
+- Predictable scheduling windows
+- Easier conflict detection
+- Better user experience with standardized time slots
+- Database-level enforcement ensures data integrity
+
+---
 
 ### 3. Soft Deletes
 
-- Teachers and Students use soft deletes (via `deleted_at` timestamp)
-- Preserves historical data and relationships
-- Lessons use hard delete (can be changed if needed)
+**Decision**: Use soft deletes for Teachers and Students, hard deletes for Lessons.
+
+**Rationale**:
+
+- Preserves historical relationships and data integrity
+- Allows recovery of accidentally deleted entities
+- Maintains referential integrity for historical lessons
+- Lessons are transactional events and can be safely hard-deleted
+
+**Implementation**:
+
+- **Teachers & Students**: Use `@DeleteDateColumn()` with `deletedAt` timestamp
+  - Soft delete: `deletedAt` is set to current timestamp
+  - Queries automatically exclude soft-deleted entities (TypeORM's `@DeleteDateColumn` behavior)
+  - Indexed for performance: `CREATE INDEX ... ON "users" ("deletedAt")`
+- **Lessons**: Hard delete (permanent removal)
+  - Lessons represent completed or cancelled events
+  - No need to preserve deleted lesson records
+
+**Example**:
+
+```typescript
+// Soft delete a teacher
+DELETE / api / v1 / teachers / { id };
+// Sets deletedAt timestamp, but teacher record remains in database
+
+// Query teachers (automatically excludes soft-deleted)
+GET / api / v1 / teachers;
+// Returns only active teachers (deletedAt IS NULL)
+
+// Hard delete a lesson
+DELETE / api / v1 / lessons / { id };
+// Permanently removes lesson from database
+```
+
+**Benefits**:
+
+- Data recovery capabilities
+- Historical data preservation
+- Maintains relationship integrity
+- Audit trail of deletions
+- Performance: Indexed `deletedAt` column for fast filtering
+
+**Trade-offs**:
+
+- Requires filtering in queries (handled automatically by TypeORM)
+- Database grows with deleted records (acceptable for this use case)
+- Lessons hard-deleted for simplicity (can be changed if needed)
+
+---
 
 ### 4. Many-to-Many Relationships
 
-- Students can have multiple teachers
-- Teachers can have multiple students
-- No limits enforced (business rule can be added later)
+**Decision**: Allow unlimited teacher-student assignments without hard limits.
+
+**Rationale**:
+
+- Students may need multiple teachers for different instruments
+- Teachers may teach multiple students
+- Business rules can be added later without schema changes
+- Provides maximum flexibility for the educational model
+
+**Implementation**:
+
+- **Join Table**: `teacher_students` with `teacher_id` and `student_id`
+- **Indexes**: Separate indexes on both foreign keys for query performance
+- **Cascading**: Cascade delete on teacher removal (teacher-student relationship removed)
+- **No Limits**: No database or application-level constraints on assignment count
+
+**Example**:
+
+```typescript
+// Student can have multiple teachers
+student.teachers = [
+  { id: 'uuid1', instrument: 'Piano' },
+  { id: 'uuid2', instrument: 'Guitar' },
+  { id: 'uuid3', instrument: 'Violin' },
+];
+
+// Teacher can have multiple students
+teacher.students = [
+  { id: 'uuid4', instrument: 'Piano' },
+  { id: 'uuid5', instrument: 'Piano' },
+  // ... many more
+];
+```
+
+**Benefits**:
+
+- Flexible assignment model
+- Supports multi-instrument learning
+- No artificial constraints
+- Easy to add business rules later (e.g., max 5 students per teacher)
+
+**Future Considerations**:
+
+- Could add `maxStudents` field to Teacher entity
+- Could add validation in service layer
+- Could add monitoring/alerting for high assignment counts
+
+---
 
 ### 5. Validation Strategy
 
-- Database-level constraints for critical validations
-- Application-level validation using class-validator
-- Real-time overlap detection for lesson scheduling
+**Decision**: Multi-layer validation approach (database + application + custom validators).
 
-### 6. No Authentication (Current Version)
+**Rationale**:
 
-- All API endpoints are public
-- Role information passed in request body for lesson creation
-- Authentication can be added in future iterations
+- Defense in depth: multiple layers catch different types of errors
+- Database constraints ensure data integrity even if application logic is bypassed
+- Application-level validation provides better error messages
+- Custom validators handle complex business rules
+
+**Implementation**:
+
+**Layer 1: Database Constraints**
+
+- Time slot validation: `CHECK (EXTRACT(MINUTE FROM "start_time") % 15 = 0)`
+- Duration validation: `CHECK (EXTRACT(EPOCH FROM ("end_time" - "start_time")) >= 900 AND <= 14400)`
+- Time range validation: `CHECK ("end_time" > "start_time")`
+
+**Layer 2: Application-Level Validation (class-validator)**
+
+- DTO validation with decorators: `@IsString()`, `@IsNotEmpty()`, `@MinLength()`, etc.
+- Custom validators: `@IsValidTimeSlot()`, `@IsValidLessonDuration()`
+- Shared validation constants for consistency
+
+**Layer 3: Business Logic Validation**
+
+- Overlap detection in service layer
+- Status transition validation
+- Role-based workflow validation
+
+**Example**:
+
+```typescript
+// Database catches invalid data even if bypassed
+INSERT INTO lessons (...) VALUES (...);  // ❌ Fails if time slot invalid
+
+// Application validates before database
+@IsValidTimeSlot()
+startTime: Date;  // ✅ Validated before save
+
+// Service layer enforces business rules
+if (overlappingLesson) {
+  throw new ConflictException('Time slot conflict');
+}
+```
+
+**Benefits**:
+
+- Multiple safety nets
+- Better error messages at application level
+- Data integrity guaranteed at database level
+- Consistent validation rules across the application
+
+---
+
+### 6. Single Table Inheritance (STI)
+
+**Decision**: Use TypeORM's Single Table Inheritance for User, Teacher, and Student entities.
+
+**Rationale**:
+
+- Teachers and Students share common fields (firstName, lastName, password, role)
+- Reduces database complexity (single `users` table)
+- Simplifies queries and relationships
+- Discriminator column (`role`) distinguishes entity types
+
+**Implementation**:
+
+- **Base Entity**: `User` with common fields
+- **Discriminator**: `role` enum column ('teacher' | 'student')
+- **Child Entities**: `Teacher` and `Student` extend `User` with `@ChildEntity()`
+- **Storage**: All stored in `users` table with type-specific columns
+
+**Example**:
+
+```typescript
+// Base User entity
+@Entity('users')
+@TableInheritance({ column: { name: 'role', enum: UserRole } })
+export class User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  role: UserRole; // Discriminator
+}
+
+// Teacher extends User
+@ChildEntity('teacher')
+export class Teacher extends User {
+  instrument: string;
+  experience: number;
+  students: Student[] = [];
+}
+
+// Student extends User
+@ChildEntity('student')
+export class Student extends User {
+  instrument: string;
+  teachers: Teacher[] = [];
+}
+```
+
+**Benefits**:
+
+- Single table simplifies queries
+- Shared fields don't require joins
+- Easy to add common features to all users
+- Type-safe entity handling
+
+**Trade-offs**:
+
+- All columns in one table (can get wide)
+- Nullable columns for type-specific fields (acceptable for this use case)
+
+---
+
+### 7. No Authentication (Current Version)
+
+**Decision**: Implement without authentication for initial version.
+
+**Rationale**:
+
+- Simplifies initial development and testing
+- Focus on core business logic first
+- Authentication can be added incrementally
+- Role information passed explicitly in requests
+
+**Implementation**:
+
+- All endpoints are public
+- `creatorRole` field in lesson creation DTO determines workflow
+- No JWT tokens or session management
+- No user context or authorization checks
+
+**Future Considerations**:
+
+- Add JWT-based authentication
+- Implement role-based access control (RBAC)
+- Add user context to requests
+- Protect endpoints with guards
+
+**Migration Path**:
+
+- Add `@nestjs/passport` and `@nestjs/jwt`
+- Create auth module with login/register endpoints
+- Add `@UseGuards(AuthGuard)` to protected routes
+- Extract user from request instead of body
+
+---
+
+### 8. Error Handling Strategy
+
+**Decision**: Global exception filter with consistent error responses.
+
+**Rationale**:
+
+- Provides consistent API error format
+- Centralized error handling reduces duplication
+- Better developer experience with clear error messages
+- Easier to add logging and monitoring
+
+**Implementation**:
+
+- **Global Filter**: `HttpExceptionFilter` catches all exceptions
+- **Standard Format**: `{ statusCode, message, timestamp, path }`
+- **Error Types**: Proper HTTP status codes (400, 404, 409, 500)
+- **Validation Errors**: Detailed field-level validation messages
+
+**Example**:
+
+```json
+{
+  "statusCode": 400,
+  "message": "Validation failed",
+  "errors": [
+    "firstName must be longer than or equal to 2 characters",
+    "password must match /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)/"
+  ],
+  "timestamp": "2025-11-05T16:00:00.000Z",
+  "path": "/api/v1/teachers"
+}
+```
+
+**Benefits**:
+
+- Consistent error format
+- Better debugging
+- Clear validation messages
+- Easy to extend with logging
+
+---
+
+### 9. Performance Optimization
+
+**Decision**: Strategic database indexing for common query patterns.
+
+**Rationale**:
+
+- Optimize frequently used queries
+- Balance between read performance and write overhead
+- Index composite columns for common filter combinations
+
+**Indexes Implemented**:
+
+- `users.role` - Filter by user role
+- `users.deletedAt` - Soft delete queries
+- `lessons.status` - Filter by lesson status
+- `lessons.teacher_id + start_time` (composite) - Teacher schedule queries
+- `lessons.student_id + start_time` (composite) - Student schedule queries
+- `teacher_students.teacher_id` - Join performance
+- `teacher_students.student_id` - Join performance
+
+**Benefits**:
+
+- Fast filtering by status, role, and soft delete
+- Efficient schedule queries (teacher/student lessons)
+- Optimized join operations
+- Scales well with data growth
+
+---
+
+### 10. API Design Principles
+
+**Decision**: RESTful API with versioning and explicit status codes.
+
+**Rationale**:
+
+- Standard REST conventions improve developer experience
+- Versioning allows API evolution
+- Explicit status codes improve API clarity
+- Consistent endpoint naming
+
+**Implementation**:
+
+- **Base Path**: `/api/v1`
+- **Resource Naming**: Plural nouns (`/teachers`, `/students`, `/lessons`)
+- **HTTP Methods**: GET (read), POST (create), PUT (update), DELETE (delete)
+- **Status Codes**: Explicit `@HttpCode()` decorators
+  - 200 OK - Successful GET/PUT
+  - 201 Created - Successful POST
+  - 204 No Content - Successful DELETE
+  - 400 Bad Request - Validation errors
+  - 404 Not Found - Resource not found
+  - 409 Conflict - Business rule violations
+
+**Example**:
+
+```typescript
+@Post()
+@HttpCode(HttpStatus.CREATED)  // Explicit 201
+createTeacher(...)
+
+@Delete(':id')
+@HttpCode(HttpStatus.NO_CONTENT)  // Explicit 204
+deleteTeacher(...)
+```
+
+**Benefits**:
+
+- Predictable API behavior
+- Clear status code semantics
+- Easy to version and extend
+- Follows REST best practices
 
 ## 🔧 Common Issues and Solutions
 
