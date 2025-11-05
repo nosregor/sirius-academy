@@ -19,7 +19,7 @@ export class Student extends User {
    * Initialized as empty array - populated when relations are loaded
    */
   @ManyToMany(() => Teacher, (teacher: Teacher) => teacher.students)
-  teachers: Teacher[] = [];
+  teachers!: Teacher[];
 
   /**
    * One-to-Many relationship with lessons
@@ -27,5 +27,5 @@ export class Student extends User {
    * Initialized as empty array - populated when relations are loaded
    */
   @OneToMany(() => Lesson, (lesson: Lesson) => lesson.student)
-  lessons: Lesson[] = [];
+  lessons!: Lesson[];
 }

@@ -29,7 +29,7 @@ export class Teacher extends User {
     joinColumn: { name: 'teacher_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'student_id', referencedColumnName: 'id' },
   })
-  students: Student[] = [];
+  students!: Student[];
 
   /**
    * One-to-Many relationship with lessons
@@ -37,5 +37,5 @@ export class Teacher extends User {
    * Initialized as empty array - populated when relations are loaded
    */
   @OneToMany(() => Lesson, (lesson: Lesson) => lesson.teacher)
-  lessons: Lesson[] = [];
+  lessons!: Lesson[];
 }
