@@ -10,11 +10,6 @@ export interface TeacherStudentsDialogData {
   students: Student[];
 }
 
-/**
- * TeacherStudentsDialog
- *
- * Modal dialog showing all students assigned to a teacher
- */
 @Component({
   selector: 'app-teacher-students-dialog',
   imports: [MatDialogModule, MatButtonModule, MatIconModule, MatListModule],

@@ -1,11 +1,5 @@
 import { Routes } from '@angular/router';
 
-/**
- * Application routes
- *
- * Defines the main routing configuration for the Sirius Academy application.
- * Uses lazy loading for feature modules to optimize bundle size.
- */
 export const routes: Routes = [
   {
     path: '',

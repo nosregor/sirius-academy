@@ -37,12 +37,6 @@ export interface Student {
   updatedAt: string;
 }
 
-/**
- * TeachersService
- *
- * Service for managing teacher-related operations
- * Provides CRUD operations and student relationship management
- */
 @Injectable({
   providedIn: 'root',
 })

@@ -10,12 +10,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StudentsService } from '../services/students.service';
 import { LoadingSpinner } from '../../../shared/components/loading-spinner/loading-spinner';
 
-/**
- * StudentForm
- *
- * Form component for creating and editing students
- * Supports validation with inline error messages
- */
 @Component({
   selector: 'app-student-form',
   imports: [
@@ -73,7 +67,6 @@ export class StudentForm implements OnInit {
     if (this.studentId) {
       this.isEditMode.set(true);
       this.loadStudent(this.studentId);
-      // Password not required for edit
       this.studentForm.get('password')?.clearValidators();
       this.studentForm.get('password')?.updateValueAndValidity();
     }
@@ -110,7 +103,6 @@ export class StudentForm implements OnInit {
     this.isSaving.set(true);
     const formValue = this.studentForm.value;
 
-    // Remove empty password field in edit mode
     if (this.isEditMode() && !formValue.password) {
       delete formValue.password;
     }

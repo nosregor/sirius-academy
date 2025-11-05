@@ -30,12 +30,6 @@ export interface GroupedLessons {
   lessons: Lesson[];
 }
 
-/**
- * LessonList
- *
- * Displays all lessons with filtering options
- * Supports status management and deletion
- */
 @Component({
   selector: 'app-lesson-list',
   imports: [
@@ -134,12 +128,10 @@ export class LessonList implements OnInit {
 
     this.lessonsService.getAllLessons(status as LessonStatus, teacherId, studentId).subscribe({
       next: (lessons) => {
-        // Store all lessons for stats
         this.allLessons.set(lessons);
 
         let filteredLessons = lessons;
 
-        // Filter by date if selected
         const selectedDate = this.selectedDate();
         if (selectedDate) {
           const dateStr = selectedDate.toISOString().split('T')[0];
@@ -149,12 +141,10 @@ export class LessonList implements OnInit {
           });
         }
 
-        // Apply sorting
         filteredLessons = this.sortLessons(filteredLessons);
 
         this.lessons.set(filteredLessons);
 
-        // Group lessons by date
         this.groupedLessons.set(this.groupLessonsByDate(filteredLessons));
 
         this.isLoading.set(false);
@@ -236,7 +226,6 @@ export class LessonList implements OnInit {
   private groupLessonsByDate(lessons: Lesson[]): GroupedLessons[] {
     const groups = new Map<string, Lesson[]>();
 
-    // Group lessons by date
     lessons.forEach((lesson) => {
       const date = new Date(lesson.startTime).toISOString().split('T')[0];
       if (!groups.has(date)) {
@@ -245,7 +234,6 @@ export class LessonList implements OnInit {
       groups.get(date)!.push(lesson);
     });
 
-    // Convert to array and add display dates
     const result: GroupedLessons[] = [];
     const today = new Date().toISOString().split('T')[0];
     const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -269,7 +257,6 @@ export class LessonList implements OnInit {
       });
     });
 
-    // Sort groups by date (descending by default)
     return result.sort((a, b) => b.date.localeCompare(a.date));
   }
 

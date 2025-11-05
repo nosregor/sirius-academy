@@ -13,12 +13,6 @@ export interface TeacherAssignmentData {
   student: Student;
 }
 
-/**
- * TeacherAssignment
- *
- * Dialog component for managing student-teacher assignments
- * Allows assigning and unassigning teachers to/from a student
- */
 @Component({
   selector: 'app-teacher-assignment',
   imports: [
@@ -52,7 +46,6 @@ export class TeacherAssignment implements OnInit {
   private loadTeachers(): void {
     this.isLoading.set(true);
 
-    // Load both assigned and all teachers using RxJS forkJoin
     forkJoin({
       assigned: this.studentsService.getTeachersByStudent(this.data.student.id),
       all: this.studentsService.getAllTeachers(),
@@ -60,12 +53,10 @@ export class TeacherAssignment implements OnInit {
       next: ({ assigned, all }) => {
         this.assignedTeachers.set(assigned);
 
-        // Filter out already assigned teachers
         const assignedIds = new Set(assigned.map((t) => t.id));
         const available = all.filter((t) => !assignedIds.has(t.id));
         this.availableTeachers.set(available);
 
-        // Separate teachers by matching instrument (prioritize same instrument)
         const matching = available.filter((t) => t.instrument === this.data.student.instrument);
         const others = available.filter((t) => t.instrument !== this.data.student.instrument);
 

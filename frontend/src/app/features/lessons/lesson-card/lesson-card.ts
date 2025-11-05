@@ -6,12 +6,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { DatePipe, NgClass } from '@angular/common';
 import { Lesson, LessonStatus } from '../services/lessons.service';
 
-/**
- * LessonCard
- *
- * Displays a single lesson with status badge and action buttons
- * Emits events for status changes and deletion
- */
 @Component({
   selector: 'app-lesson-card',
   imports: [MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, DatePipe, NgClass],

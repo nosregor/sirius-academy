@@ -9,12 +9,6 @@ export interface ConfirmDialogData {
   cancelText?: string;
 }
 
-/**
- * ConfirmDialog
- *
- * Reusable confirmation dialog component
- * Used for destructive actions like delete operations
- */
 @Component({
   selector: 'app-confirm-dialog',
   imports: [MatDialogModule, MatButtonModule],

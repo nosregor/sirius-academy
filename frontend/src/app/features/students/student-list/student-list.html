@@ -21,19 +21,16 @@
       </div>
     } @else {
       <table mat-table [dataSource]="students()" class="full-width">
-        <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Name</th>
           <td mat-cell *matCellDef="let student">{{ getFullName(student) }}</td>
         </ng-container>
 
-        <!-- Instrument Column -->
         <ng-container matColumnDef="instrument">
           <th mat-header-cell *matHeaderCellDef>Instrument</th>
           <td mat-cell *matCellDef="let student">{{ student.instrument }}</td>
         </ng-container>
 
-        <!-- Teacher Count Column -->
         <ng-container matColumnDef="teacherCount">
           <th mat-header-cell *matHeaderCellDef>Teachers</th>
           <td mat-cell *matCellDef="let student">
@@ -41,7 +38,6 @@
           </td>
         </ng-container>
 
-        <!-- Actions Column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let student">

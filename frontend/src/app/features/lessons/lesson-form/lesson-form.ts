@@ -22,12 +22,6 @@ import { StudentsService, Student } from '../../students/services/students.servi
 import { TeachersService, Teacher } from '../../teachers/services/teachers.service';
 import { LoadingSpinner } from '../../../shared/components/loading-spinner/loading-spinner';
 
-/**
- * LessonForm
- *
- * Form component for creating lessons
- * Enforces 15-minute time slots and duration validation
- */
 @Component({
   selector: 'app-lesson-form',
   imports: [
@@ -90,7 +84,6 @@ export class LessonForm implements OnInit {
     let defaultHour = now.getHours();
     let defaultMinute = Math.ceil(now.getMinutes() / 15) * 15; // Round up to nearest 15 minutes
 
-    // Handle minute overflow
     if (defaultMinute >= 60) {
       defaultMinute = 0;
       defaultHour = (defaultHour + 1) % 24;
@@ -106,11 +99,9 @@ export class LessonForm implements OnInit {
       creatorRole: ['teacher', Validators.required],
     });
 
-    // Update startTime when hour or minute changes
     this.lessonForm.get('startHour')?.valueChanges.subscribe(() => this.updateStartTime());
     this.lessonForm.get('startMinute')?.valueChanges.subscribe(() => this.updateStartTime());
 
-    // When teacher changes, filter students to show only assigned ones
     this.lessonForm.get('teacherId')?.valueChanges.subscribe((teacherId) => {
       this.selectedTeacherId.set(teacherId);
       if (teacherId) {
@@ -118,7 +109,6 @@ export class LessonForm implements OnInit {
       } else {
         this.filteredStudents.set(this.allStudents());
       }
-      // Reset student selection when teacher changes
       this.lessonForm.patchValue({ studentId: '' });
     });
   }
@@ -133,7 +123,6 @@ export class LessonForm implements OnInit {
   private loadData(): void {
     this.isLoading.set(true);
 
-    // Load teachers and students using RxJS forkJoin
     forkJoin({
       teachers: this.teachersService.getAllTeachers(),
       students: this.studentsService.getAllStudents(),
@@ -154,7 +143,6 @@ export class LessonForm implements OnInit {
   }
 
   private filterStudentsByTeacher(teacherId: string): void {
-    // Load students assigned to this specific teacher
     this.teachersService.getStudentsByTeacher(teacherId).subscribe({
       next: (assignedStudents) => {
         this.filteredStudents.set(assignedStudents);
@@ -193,10 +181,8 @@ export class LessonForm implements OnInit {
     this.isSaving.set(true);
     const formValue = this.lessonForm.value;
 
-    // Build time string from hour and minute
     const timeString = `${formValue.startHour.toString().padStart(2, '0')}:${formValue.startMinute.toString().padStart(2, '0')}`;
 
-    // Combine date and time
     const startDateTime = this.combineDateAndTime(formValue.startDate, timeString);
     const endDateTime = new Date(startDateTime.getTime() + formValue.duration * 60 * 1000);
 
@@ -221,10 +207,8 @@ export class LessonForm implements OnInit {
         console.error('Error creating lesson:', error);
         let errorMsg = 'Failed to create lesson';
 
-        // Extract error message from various response formats
         if (error.error?.message) {
           if (Array.isArray(error.error.message)) {
-            // Handle validation errors array
             errorMsg = error.error.message.join(', ');
           } else {
             errorMsg = error.error.message;
@@ -233,7 +217,6 @@ export class LessonForm implements OnInit {
           errorMsg = error.message;
         }
 
-        // Make specific errors more user-friendly
         if (errorMsg.includes('Student must be assigned to teacher')) {
           errorMsg =
             'Cannot create lesson: Student must be assigned to this teacher first. Please assign the student in the Students section.';

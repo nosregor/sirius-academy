@@ -23,7 +23,6 @@
   </mat-card-header>
 
   <mat-card-content>
-    <!-- Summary Stats -->
     @if (!isLoading()) {
       <div class="stats-summary">
         <div class="stat-card pending">
@@ -65,7 +64,6 @@
       </div>
     }
 
-    <!-- Filters -->
     <div class="filters">
       <mat-form-field>
         <mat-label>Status</mat-label>
@@ -132,7 +130,6 @@
       </mat-form-field>
     </div>
 
-    <!-- Lessons List -->
     @if (isLoading()) {
       <app-loading-spinner message="Loading lessons..."></app-loading-spinner>
     } @else if (lessons().length === 0) {
@@ -172,7 +169,6 @@
       } @else {
         <div class="table-container">
           <table mat-table [dataSource]="lessons()" class="lessons-table">
-            <!-- Date Column -->
             <ng-container matColumnDef="date">
               <th mat-header-cell *matHeaderCellDef>Date & Time</th>
               <td mat-cell *matCellDef="let lesson">
@@ -180,7 +176,6 @@
               </td>
             </ng-container>
 
-            <!-- Teacher Column -->
             <ng-container matColumnDef="teacher">
               <th mat-header-cell *matHeaderCellDef>Teacher</th>
               <td mat-cell *matCellDef="let lesson">
@@ -188,7 +183,6 @@
               </td>
             </ng-container>
 
-            <!-- Student Column -->
             <ng-container matColumnDef="student">
               <th mat-header-cell *matHeaderCellDef>Student</th>
               <td mat-cell *matCellDef="let lesson">
@@ -196,7 +190,6 @@
               </td>
             </ng-container>
 
-            <!-- Duration Column -->
             <ng-container matColumnDef="duration">
               <th mat-header-cell *matHeaderCellDef>Duration</th>
               <td mat-cell *matCellDef="let lesson">
@@ -204,7 +197,6 @@
               </td>
             </ng-container>
 
-            <!-- Status Column -->
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Status</th>
               <td mat-cell *matCellDef="let lesson">
@@ -214,7 +206,6 @@
               </td>
             </ng-container>
 
-            <!-- Created By Column -->
             <ng-container matColumnDef="createdBy">
               <th mat-header-cell *matHeaderCellDef>Created By</th>
               <td mat-cell *matCellDef="let lesson">
@@ -224,7 +215,6 @@
               </td>
             </ng-container>
 
-            <!-- Actions Column -->
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let lesson">

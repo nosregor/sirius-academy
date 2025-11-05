@@ -15,12 +15,6 @@ import {
 } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { TeacherAssignment } from '../teacher-assignment/teacher-assignment';
 
-/**
- * StudentList
- *
- * Displays all students in a Material table
- * Supports delete, manage teachers, and navigation to form
- */
 @Component({
   selector: 'app-student-list',
   imports: [

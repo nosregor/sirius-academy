@@ -45,12 +45,6 @@ export interface UpdateLessonStatusDto {
   status: LessonStatus;
 }
 
-/**
- * LessonsService
- *
- * Service for managing lesson-related operations
- * Handles lesson creation, status updates, and filtering
- */
 @Injectable({
   providedIn: 'root',
 })

@@ -18,12 +18,6 @@ import {
   TeacherStudentsDialogData,
 } from '../teacher-students-dialog/teacher-students-dialog';
 
-/**
- * TeacherList
- *
- * Displays all teachers in a Material table
- * Supports delete, view students, and navigation to form
- */
 @Component({
   selector: 'app-teacher-list',
   imports: [

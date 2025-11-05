@@ -10,12 +10,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TeachersService } from '../services/teachers.service';
 import { LoadingSpinner } from '../../../shared/components/loading-spinner/loading-spinner';
 
-/**
- * TeacherForm
- *
- * Form component for creating and editing teachers
- * Supports validation with inline error messages
- */
 @Component({
   selector: 'app-teacher-form',
   imports: [
@@ -74,7 +68,6 @@ export class TeacherForm implements OnInit {
     if (this.teacherId) {
       this.isEditMode.set(true);
       this.loadTeacher(this.teacherId);
-      // Password not required for edit
       this.teacherForm.get('password')?.clearValidators();
       this.teacherForm.get('password')?.updateValueAndValidity();
     }
@@ -112,7 +105,6 @@ export class TeacherForm implements OnInit {
     this.isSaving.set(true);
     const formValue = this.teacherForm.value;
 
-    // Remove empty password field in edit mode
     if (this.isEditMode() && !formValue.password) {
       delete formValue.password;
     }

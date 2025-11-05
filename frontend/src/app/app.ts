@@ -7,14 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 
-/**
- * Root App Component
- *
- * Provides the main application shell with:
- * - Material toolbar
- * - Side navigation drawer
- * - Main content area with router outlet
- */
 @Component({
   selector: 'app-root',
   imports: [

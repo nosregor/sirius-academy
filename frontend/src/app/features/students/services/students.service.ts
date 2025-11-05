@@ -34,12 +34,6 @@ export interface UpdateStudentDto {
   instrument?: string;
 }
 
-/**
- * StudentsService
- *
- * Service for managing student-related operations
- * Provides CRUD operations and teacher relationship management
- */
 @Injectable({
   providedIn: 'root',
 })
