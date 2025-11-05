@@ -13,6 +13,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { LessonsService } from '../services/lessons.service';
@@ -36,8 +38,11 @@ import { LoadingSpinner } from '../../../shared/components/loading-spinner/loadi
     MatButtonModule,
     MatCardModule,
     MatSnackBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     LoadingSpinner,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './lesson-form.html',
   styleUrl: './lesson-form.scss',
 })
@@ -59,6 +64,8 @@ export class LessonForm implements OnInit {
     { value: 'teacher', label: 'Teacher (Confirmed)' },
     { value: 'student', label: 'Student (Pending)' },
   ];
+
+  readonly minDate = new Date();
 
   ngOnInit(): void {
     this.initializeForm();
@@ -171,10 +178,10 @@ export class LessonForm implements OnInit {
     return '';
   }
 
-  private combineDateAndTime(dateStr: string, timeStr: string): Date {
-    const date = new Date(dateStr);
+  private combineDateAndTime(date: Date | string, timeStr: string): Date {
+    const dateObj = date instanceof Date ? date : new Date(date);
     const [hours, minutes] = timeStr.split(':').map(Number);
-    date.setHours(hours, minutes, 0, 0);
-    return date;
+    dateObj.setHours(hours, minutes, 0, 0);
+    return dateObj;
   }
 }

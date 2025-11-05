@@ -6,6 +6,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { LessonsService, Lesson, LessonStatus } from '../services/lessons.service';
 import { StudentsService, Student } from '../../students/services/students.service';
@@ -33,9 +35,12 @@ import {
     MatFormFieldModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     LoadingSpinner,
     LessonCard,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './lesson-list.html',
   styleUrl: './lesson-list.scss',
 })
@@ -55,6 +60,7 @@ export class LessonList implements OnInit {
   selectedStatus = signal<LessonStatus | ''>('');
   selectedTeacher = signal<string>('');
   selectedStudent = signal<string>('');
+  selectedDate = signal<Date | null>(null);
 
   readonly statusOptions = [
     { value: '', label: 'All Statuses' },
@@ -89,7 +95,19 @@ export class LessonList implements OnInit {
 
     this.lessonsService.getAllLessons(status as LessonStatus, teacherId, studentId).subscribe({
       next: (lessons) => {
-        this.lessons.set(lessons);
+        let filteredLessons = lessons;
+
+        // Filter by date if selected
+        const selectedDate = this.selectedDate();
+        if (selectedDate) {
+          const dateStr = selectedDate.toISOString().split('T')[0];
+          filteredLessons = lessons.filter((lesson) => {
+            const lessonDate = new Date(lesson.startTime).toISOString().split('T')[0];
+            return lessonDate === dateStr;
+          });
+        }
+
+        this.lessons.set(filteredLessons);
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -101,6 +119,16 @@ export class LessonList implements OnInit {
   }
 
   onFilterChange(): void {
+    this.loadLessons();
+  }
+
+  onDateChange(date: Date | null): void {
+    this.selectedDate.set(date);
+    this.loadLessons();
+  }
+
+  clearDateFilter(): void {
+    this.selectedDate.set(null);
     this.loadLessons();
   }
 

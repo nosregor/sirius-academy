@@ -41,10 +41,18 @@
         <div class="form-row">
           <mat-form-field class="full-width">
             <mat-label>Date</mat-label>
-            <input matInput type="date" formControlName="startDate" />
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [min]="minDate"
+              formControlName="startDate"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
             @if (getErrorMessage('startDate')) {
               <mat-error>{{ getErrorMessage('startDate') }}</mat-error>
             }
+            <mat-hint>Select a date from today onwards</mat-hint>
           </mat-form-field>
 
           <mat-form-field class="full-width">

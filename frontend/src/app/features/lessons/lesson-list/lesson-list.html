@@ -43,6 +43,28 @@
           }
         </mat-select>
       </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="datePicker"
+          [value]="selectedDate()"
+          (dateChange)="onDateChange($event.value)"
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+        <mat-datepicker #datePicker></mat-datepicker>
+        @if (selectedDate()) {
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="clearDateFilter()"
+            aria-label="Clear date filter"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
     </div>
 
     <!-- Lessons List -->
