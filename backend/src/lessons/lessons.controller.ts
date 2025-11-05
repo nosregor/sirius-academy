@@ -51,20 +51,9 @@ export class LessonsController {
   }
 
   /**
-   * Get a single lesson by ID
-   * GET /lessons/:id
-   */
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  findLessonById(
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<Lesson> {
-    return this.lessonsService.findLessonById(id);
-  }
-
-  /**
    * Get all lessons for a specific teacher
    * GET /lessons/teacher/:teacherId
+   * NOTE: Must come BEFORE /:id route to avoid matching conflicts
    */
   @Get('teacher/:teacherId')
   @HttpCode(HttpStatus.OK)
@@ -77,6 +66,7 @@ export class LessonsController {
   /**
    * Get all lessons for a specific student
    * GET /lessons/student/:studentId
+   * NOTE: Must come BEFORE /:id route to avoid matching conflicts
    */
   @Get('student/:studentId')
   @HttpCode(HttpStatus.OK)
@@ -84,6 +74,19 @@ export class LessonsController {
     @Param('studentId', new ParseUUIDPipe()) studentId: string,
   ): Promise<Lesson[]> {
     return this.lessonsService.findLessonsByStudent(studentId);
+  }
+
+  /**
+   * Get a single lesson by ID
+   * GET /lessons/:id
+   * NOTE: Must come AFTER literal routes (teacher, student) to avoid conflicts
+   */
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  findLessonById(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<Lesson> {
+    return this.lessonsService.findLessonById(id);
   }
 
   /**
