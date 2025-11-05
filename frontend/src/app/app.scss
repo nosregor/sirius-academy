@@ -1,0 +1,48 @@
+/* App component styles */
+
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.app-title {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.app-container {
+  height: calc(100vh - 64px); // Subtract toolbar height
+  width: 100%;
+}
+
+.app-sidenav {
+  width: 250px;
+}
+
+.content-container {
+  padding: 24px;
+  min-height: 100%;
+  background-color: #fafafa;
+}
+
+.active-link {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.app-info {
+  margin-top: auto;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .app-sidenav {
+    width: 200px;
+  }
+
+  .content-container {
+    padding: 16px;
+  }
+}

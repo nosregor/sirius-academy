@@ -54,6 +54,22 @@ ng e2e
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
+## TypeScript Configuration
+
+This project uses a customized TypeScript configuration optimized for:
+
+- Modern ES modules with dynamic imports (lazy loading)
+- npm package management
+- Angular 19+ standalone components
+- Strict type safety
+
+### Quick Type Check
+
+```bash
+# Run TypeScript type checking without building
+npx tsc --noEmit
+```
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

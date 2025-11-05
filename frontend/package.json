@@ -4,9 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production",
+    "build:dev": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "prettier": {
     "printWidth": 100,

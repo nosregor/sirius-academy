@@ -34,7 +34,7 @@ export class InitialSchemaWithIndexes1762340580136
       `CREATE TYPE "public"."users_role_enum" AS ENUM('teacher', 'student')`,
     );
     await queryRunner.query(
-      `CREATE TYPE "public"."users_type_enum" AS ENUM('teacher', 'student')`,
+      `CREATE TYPE "public"."users_type_enum" AS ENUM('Teacher', 'Student')`,
     );
     await queryRunner.query(
       `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying(100) NOT NULL, "lastName" character varying(100) NOT NULL, "password" character varying(255) NOT NULL, "role" "public"."users_role_enum" NOT NULL, "isPasswordHashed" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "instrument" character varying(100), "experience" integer DEFAULT '0', "type" "public"."users_type_enum" NOT NULL, CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,

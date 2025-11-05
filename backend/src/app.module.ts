@@ -1,13 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { databaseConfig } from './config/database.config';
+
+import { Lesson } from './entities/lesson.entity';
+import { Student } from './entities/student.entity';
+import { Teacher } from './entities/teacher.entity';
+import { User } from './entities/user.entity';
+
+import { LessonsModule } from './lessons/lessons.module';
+import { StudentsModule } from './students/students.module';
+import { TeachersModule } from './teachers/teachers.module';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { databaseConfig } from './config/database.config';
-import { TeachersModule } from './teachers/teachers.module';
-import { StudentsModule } from './students/students.module';
-import { LessonsModule } from './lessons/lessons.module';
-
 /**
  * Root application module
  * Configures global modules, database connection, and core services
@@ -30,12 +37,17 @@ import { LessonsModule } from './lessons/lessons.module';
         if (!config) {
           throw new Error('Database configuration not found');
         }
-        return config;
+        return {
+          ...config,
+          entities: [Lesson, Student, Teacher, User],
+          synchronize: true, // Ensure this is true during development
+          logging: true, // Enable to see what's happening
+        };
       },
     }),
-    TeachersModule,
-    StudentsModule,
     LessonsModule,
+    StudentsModule,
+    TeachersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

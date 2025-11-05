@@ -1,0 +1,74 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Lessons</mat-card-title>
+    <div class="spacer"></div>
+    <button mat-raised-button color="primary" (click)="onCreateLesson()">
+      <mat-icon>add</mat-icon>
+      New Lesson
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Filters -->
+    <div class="filters">
+      <mat-form-field>
+        <mat-label>Status</mat-label>
+        <mat-select [(value)]="selectedStatus" (selectionChange)="onFilterChange()">
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Teacher</mat-label>
+        <mat-select [(value)]="selectedTeacher" (selectionChange)="onFilterChange()">
+          <mat-option value="">All Teachers</mat-option>
+          @for (teacher of teachers(); track teacher.id) {
+            <mat-option [value]="teacher.id">
+              {{ teacher.firstName }} {{ teacher.lastName }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Student</mat-label>
+        <mat-select [(value)]="selectedStudent" (selectionChange)="onFilterChange()">
+          <mat-option value="">All Students</mat-option>
+          @for (student of students(); track student.id) {
+            <mat-option [value]="student.id">
+              {{ student.firstName }} {{ student.lastName }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Lessons List -->
+    @if (isLoading()) {
+      <app-loading-spinner message="Loading lessons..."></app-loading-spinner>
+    } @else if (lessons().length === 0) {
+      <div class="empty-state">
+        <mat-icon>event_note</mat-icon>
+        <p>No lessons found</p>
+        <button mat-raised-button color="primary" (click)="onCreateLesson()">
+          Create First Lesson
+        </button>
+      </div>
+    } @else {
+      <div class="lessons-container">
+        @for (lesson of lessons(); track lesson.id) {
+          <app-lesson-card
+            [lesson]="lesson"
+            (confirm)="onConfirm($event)"
+            (reject)="onReject($event)"
+            (complete)="onComplete($event)"
+            (cancel)="onCancel($event)"
+            (delete)="onDelete($event)"
+          />
+        }
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

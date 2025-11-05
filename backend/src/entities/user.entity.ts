@@ -26,7 +26,9 @@ export enum UserRole {
  * Teacher and Student entities extend this using @ChildEntity
  */
 @Entity('users')
-@TableInheritance({ column: { type: 'enum', name: 'type', enum: UserRole } })
+@TableInheritance({
+  column: { type: 'enum', name: 'type', enum: ['Teacher', 'Student'] },
+})
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

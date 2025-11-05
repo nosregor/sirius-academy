@@ -1,0 +1,95 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>New Lesson</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isLoading()) {
+      <app-loading-spinner message="Loading..."></app-loading-spinner>
+    } @else {
+      <form [formGroup]="lessonForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field class="full-width">
+            <mat-label>Teacher</mat-label>
+            <mat-select formControlName="teacherId">
+              @for (teacher of teachers(); track teacher.id) {
+                <mat-option [value]="teacher.id">
+                  {{ teacher.firstName }} {{ teacher.lastName }} - {{ teacher.instrument }}
+                </mat-option>
+              }
+            </mat-select>
+            @if (getErrorMessage('teacherId')) {
+              <mat-error>{{ getErrorMessage('teacherId') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Student</mat-label>
+            <mat-select formControlName="studentId">
+              @for (student of students(); track student.id) {
+                <mat-option [value]="student.id">
+                  {{ student.firstName }} {{ student.lastName }} - {{ student.instrument }}
+                </mat-option>
+              }
+            </mat-select>
+            @if (getErrorMessage('studentId')) {
+              <mat-error>{{ getErrorMessage('studentId') }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="full-width">
+            <mat-label>Date</mat-label>
+            <input matInput type="date" formControlName="startDate" />
+            @if (getErrorMessage('startDate')) {
+              <mat-error>{{ getErrorMessage('startDate') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Start Time</mat-label>
+            <input matInput type="time" step="900" formControlName="startTime" />
+            @if (getErrorMessage('startTime')) {
+              <mat-error>{{ getErrorMessage('startTime') }}</mat-error>
+            }
+            <mat-hint>Must be in 15-minute intervals (e.g., 09:00, 09:15, 09:30)</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="full-width">
+            <mat-label>Duration (minutes)</mat-label>
+            <input matInput type="number" formControlName="duration" min="15" max="240" step="15" />
+            @if (getErrorMessage('duration')) {
+              <mat-error>{{ getErrorMessage('duration') }}</mat-error>
+            }
+            <mat-hint>Between 15 and 240 minutes (15min increments)</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Creator Role</mat-label>
+            <mat-select formControlName="creatorRole">
+              @for (option of creatorRoleOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+            @if (getErrorMessage('creatorRole')) {
+              <mat-error>{{ getErrorMessage('creatorRole') }}</mat-error>
+            }
+            <mat-hint>Teacher creates confirmed lessons, student creates pending requests</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="onCancel()" [disabled]="isSaving()">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="isSaving()">
+            {{ isSaving() ? 'Creating...' : 'Create Lesson' }}
+          </button>
+        </div>
+      </form>
+    }
+  </mat-card-content>
+</mat-card>

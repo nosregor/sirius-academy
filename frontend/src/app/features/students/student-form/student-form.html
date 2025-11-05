@@ -1,0 +1,63 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      {{ isEditMode() ? 'Edit Student' : 'New Student' }}
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isLoading()) {
+      <app-loading-spinner message="Loading student..."></app-loading-spinner>
+    } @else {
+      <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field class="full-width">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" />
+            @if (getErrorMessage('firstName')) {
+              <mat-error>{{ getErrorMessage('firstName') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" />
+            @if (getErrorMessage('lastName')) {
+              <mat-error>{{ getErrorMessage('lastName') }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password" />
+          @if (getErrorMessage('password')) {
+            <mat-error>{{ getErrorMessage('password') }}</mat-error>
+          }
+          @if (!isEditMode()) {
+            <mat-hint>Min 8 characters, uppercase, lowercase, and number</mat-hint>
+          } @else {
+            <mat-hint>Leave blank to keep current password</mat-hint>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Instrument</mat-label>
+          <input matInput formControlName="instrument" />
+          @if (getErrorMessage('instrument')) {
+            <mat-error>{{ getErrorMessage('instrument') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="onCancel()" [disabled]="isSaving()">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="isSaving()">
+            {{ isSaving() ? 'Saving...' : isEditMode() ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </form>
+    }
+  </mat-card-content>
+</mat-card>

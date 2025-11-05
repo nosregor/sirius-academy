@@ -1,0 +1,58 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <div class="lesson-title">
+        <span>{{ getTeacherName() }} → {{ getStudentName() }}</span>
+        <mat-chip class="status-chip" [ngClass]="getStatusClass(lesson().status)">
+          {{ lesson().status }}
+        </mat-chip>
+      </div>
+    </mat-card-title>
+    <mat-card-subtitle>
+      {{ lesson().startTime | date: 'medium' }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="lesson-details">
+      <div class="detail-item">
+        <mat-icon>schedule</mat-icon>
+        <span>{{ getDuration() }}</span>
+      </div>
+      <div class="detail-item">
+        <mat-icon>music_note</mat-icon>
+        <span>{{ lesson().teacher?.instrument || 'N/A' }}</span>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    @if (canConfirm()) {
+      <button mat-button color="primary" (click)="onConfirm()">
+        <mat-icon>check</mat-icon>
+        Confirm
+      </button>
+    }
+    @if (canReject()) {
+      <button mat-button color="warn" (click)="onReject()">
+        <mat-icon>close</mat-icon>
+        Reject
+      </button>
+    }
+    @if (canComplete()) {
+      <button mat-button color="primary" (click)="onComplete()">
+        <mat-icon>done_all</mat-icon>
+        Complete
+      </button>
+    }
+    @if (canCancel()) {
+      <button mat-button (click)="onCancel()">
+        <mat-icon>cancel</mat-icon>
+        Cancel
+      </button>
+    }
+    <button mat-icon-button color="warn" (click)="onDelete()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

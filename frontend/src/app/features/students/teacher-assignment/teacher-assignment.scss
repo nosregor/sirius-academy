@@ -1,0 +1,45 @@
+mat-dialog-content {
+  min-height: 400px;
+  padding: 20px 0;
+}
+
+.teachers-section {
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .empty-message {
+    color: rgba(0, 0, 0, 0.6);
+    font-style: italic;
+    margin: 8px 0;
+  }
+
+  mat-chip-set {
+    margin-bottom: 16px;
+  }
+
+  mat-list {
+    padding: 0;
+
+    mat-list-item {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 0 0;
+  margin-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}

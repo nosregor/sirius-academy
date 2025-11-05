@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>Manage Teachers for {{ data.student.firstName }} {{ data.student.lastName }}</h2>
+
+<mat-dialog-content>
+  @if (isLoading()) {
+    <app-loading-spinner message="Loading teachers..."></app-loading-spinner>
+  } @else {
+    <div class="teachers-section">
+      <h3>Assigned Teachers ({{ assignedTeachers().length }})</h3>
+      @if (assignedTeachers().length === 0) {
+        <p class="empty-message">No teachers assigned yet</p>
+      } @else {
+        <mat-chip-set>
+          @for (teacher of assignedTeachers(); track teacher.id) {
+            <mat-chip (removed)="onUnassignTeacher(teacher)">
+              {{ getTeacherName(teacher) }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          }
+        </mat-chip-set>
+      }
+    </div>
+
+    <div class="teachers-section">
+      <h3>Available Teachers ({{ availableTeachers().length }})</h3>
+      @if (availableTeachers().length === 0) {
+        <p class="empty-message">All teachers are already assigned</p>
+      } @else {
+        <mat-list>
+          @for (teacher of availableTeachers(); track teacher.id) {
+            <mat-list-item>
+              <span matListItemTitle>{{ getTeacherName(teacher) }}</span>
+              <span matListItemLine>{{ teacher.instrument }} - {{ teacher.experience }} years</span>
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="onAssignTeacher(teacher)"
+                matListItemMeta
+              >
+                <mat-icon>add</mat-icon>
+              </button>
+            </mat-list-item>
+          }
+        </mat-list>
+      }
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="onClose()">Done</button>
+</mat-dialog-actions>

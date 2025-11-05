@@ -21,6 +21,7 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "preserveSymlinks": false,
             "assets": [
               {
                 "glob": "**/*",

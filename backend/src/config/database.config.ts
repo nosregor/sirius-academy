@@ -1,3 +1,7 @@
+import { User } from '../entities/user.entity';
+import { Teacher } from '../entities/teacher.entity';
+import { Student } from '../entities/student.entity';
+import { Lesson } from '../entities/lesson.entity';
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSource, DataSourceOptions } from 'typeorm';
@@ -15,7 +19,7 @@ export const databaseConfig = registerAs(
     username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || 'postgres',
     database: process.env.DB_DATABASE || 'sirius_academy',
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    entities: [User, Teacher, Student, Lesson],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
     synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
     logging: process.env.TYPEORM_LOGGING === 'true',
@@ -38,7 +42,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_DATABASE || 'sirius_academy',
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  entities: [User, Teacher, Student, Lesson],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   synchronize: false,
   logging: process.env.TYPEORM_LOGGING === 'true',
