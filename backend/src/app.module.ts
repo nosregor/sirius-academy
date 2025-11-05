@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { databaseConfig } from './config/database.config';
 import { TeachersModule } from './teachers/teachers.module';
 import { StudentsModule } from './students/students.module';
+import { LessonsModule } from './lessons/lessons.module';
 
 /**
  * Root application module
@@ -34,6 +35,7 @@ import { StudentsModule } from './students/students.module';
     }),
     TeachersModule,
     StudentsModule,
+    LessonsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
