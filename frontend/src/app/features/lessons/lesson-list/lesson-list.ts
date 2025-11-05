@@ -62,6 +62,7 @@ export class LessonList implements OnInit {
   selectedTeacher = signal<string>('');
   selectedStudent = signal<string>('');
   selectedDate = signal<Date | null>(null);
+  selectedSort = signal<string>('date-desc');
 
   readonly statusOptions = [
     { value: '', label: 'All Statuses' },
@@ -69,6 +70,14 @@ export class LessonList implements OnInit {
     { value: LessonStatus.CONFIRMED, label: 'Confirmed' },
     { value: LessonStatus.CANCELLED, label: 'Cancelled' },
     { value: LessonStatus.COMPLETED, label: 'Completed' },
+  ];
+
+  readonly sortOptions = [
+    { value: 'date-desc', label: 'Newest First' },
+    { value: 'date-asc', label: 'Oldest First' },
+    { value: 'teacher', label: 'Teacher Name' },
+    { value: 'student', label: 'Student Name' },
+    { value: 'status', label: 'Status' },
   ];
 
   ngOnInit(): void {
@@ -111,6 +120,9 @@ export class LessonList implements OnInit {
           });
         }
 
+        // Apply sorting
+        filteredLessons = this.sortLessons(filteredLessons);
+
         this.lessons.set(filteredLessons);
         this.isLoading.set(false);
       },
@@ -134,6 +146,42 @@ export class LessonList implements OnInit {
   clearDateFilter(): void {
     this.selectedDate.set(null);
     this.loadLessons();
+  }
+
+  onSortChange(): void {
+    this.loadLessons();
+  }
+
+  private sortLessons(lessons: Lesson[]): Lesson[] {
+    const sortValue = this.selectedSort();
+    const sorted = [...lessons];
+
+    switch (sortValue) {
+      case 'date-desc':
+        return sorted.sort(
+          (a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
+        );
+      case 'date-asc':
+        return sorted.sort(
+          (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+        );
+      case 'teacher':
+        return sorted.sort((a, b) => {
+          const teacherA = this.getTeacherName(a.teacherId).toLowerCase();
+          const teacherB = this.getTeacherName(b.teacherId).toLowerCase();
+          return teacherA.localeCompare(teacherB);
+        });
+      case 'student':
+        return sorted.sort((a, b) => {
+          const studentA = this.getStudentName(a.studentId).toLowerCase();
+          const studentB = this.getStudentName(b.studentId).toLowerCase();
+          return studentA.localeCompare(studentB);
+        });
+      case 'status':
+        return sorted.sort((a, b) => a.status.localeCompare(b.status));
+      default:
+        return sorted;
+    }
   }
 
   onCreateLesson(): void {
