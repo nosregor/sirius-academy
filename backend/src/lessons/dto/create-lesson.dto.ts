@@ -67,9 +67,9 @@ export class CreateLessonDto {
    * - Student-created lessons → pending
    */
   @ApiProperty({ enum: ['teacher', 'student'] })
-  @IsNotEmpty({ message: 'Creator role is required' })
+  @IsNotEmpty({ message: 'Creator is required' })
   @IsEnum(UserRole, {
-    message: 'Creator role must be either "teacher" or "student"',
+    message: 'Creator must be either "teacher" or "student"',
   })
   creatorRole!: UserRole;
 }

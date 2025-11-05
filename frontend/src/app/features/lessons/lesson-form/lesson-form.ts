@@ -57,12 +57,15 @@ export class LessonForm implements OnInit {
   lessonForm!: FormGroup;
   teachers = signal<Teacher[]>([]);
   students = signal<Student[]>([]);
+  allStudents = signal<Student[]>([]);
+  filteredStudents = signal<Student[]>([]);
   isLoading = signal<boolean>(true);
   isSaving = signal<boolean>(false);
+  selectedTeacherId = signal<string>('');
 
   readonly creatorRoleOptions = [
-    { value: 'teacher', label: 'Teacher (Confirmed)' },
-    { value: 'student', label: 'Student (Pending)' },
+    { value: 'teacher', label: 'Teacher' },
+    { value: 'student', label: 'Student' },
   ];
 
   readonly minDate = new Date();
@@ -106,6 +109,18 @@ export class LessonForm implements OnInit {
     // Update startTime when hour or minute changes
     this.lessonForm.get('startHour')?.valueChanges.subscribe(() => this.updateStartTime());
     this.lessonForm.get('startMinute')?.valueChanges.subscribe(() => this.updateStartTime());
+
+    // When teacher changes, filter students to show only assigned ones
+    this.lessonForm.get('teacherId')?.valueChanges.subscribe((teacherId) => {
+      this.selectedTeacherId.set(teacherId);
+      if (teacherId) {
+        this.filterStudentsByTeacher(teacherId);
+      } else {
+        this.filteredStudents.set(this.allStudents());
+      }
+      // Reset student selection when teacher changes
+      this.lessonForm.patchValue({ studentId: '' });
+    });
   }
 
   private updateStartTime(): void {
@@ -126,12 +141,35 @@ export class LessonForm implements OnInit {
       next: ({ teachers, students }) => {
         this.teachers.set(teachers);
         this.students.set(students);
+        this.allStudents.set(students);
+        this.filteredStudents.set(students);
         this.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error loading data:', error);
         this.snackBar.open('Failed to load data', 'Close', { duration: 3000 });
         this.isLoading.set(false);
+      },
+    });
+  }
+
+  private filterStudentsByTeacher(teacherId: string): void {
+    // Load students assigned to this specific teacher
+    this.teachersService.getStudentsByTeacher(teacherId).subscribe({
+      next: (assignedStudents) => {
+        this.filteredStudents.set(assignedStudents);
+
+        if (assignedStudents.length === 0) {
+          this.snackBar.open(
+            'No students assigned to this teacher. Please assign students first in the Students section.',
+            'Close',
+            { duration: 4000 },
+          );
+        }
+      },
+      error: (error) => {
+        console.error('Error loading teacher students:', error);
+        this.filteredStudents.set([]);
       },
     });
   }
@@ -181,8 +219,31 @@ export class LessonForm implements OnInit {
       },
       error: (error) => {
         console.error('Error creating lesson:', error);
-        const errorMsg = error.error?.message || 'Failed to create lesson';
-        this.snackBar.open(errorMsg, 'Close', { duration: 4000 });
+        let errorMsg = 'Failed to create lesson';
+
+        // Extract error message from various response formats
+        if (error.error?.message) {
+          if (Array.isArray(error.error.message)) {
+            // Handle validation errors array
+            errorMsg = error.error.message.join(', ');
+          } else {
+            errorMsg = error.error.message;
+          }
+        } else if (error.message) {
+          errorMsg = error.message;
+        }
+
+        // Make specific errors more user-friendly
+        if (errorMsg.includes('Student must be assigned to teacher')) {
+          errorMsg =
+            'Cannot create lesson: Student must be assigned to this teacher first. Please assign the student in the Students section.';
+        } else if (errorMsg.includes('conflicting lesson')) {
+          errorMsg = 'Cannot create lesson: Time slot conflicts with an existing lesson.';
+        } else if (errorMsg.includes('not found')) {
+          errorMsg = 'Cannot create lesson: Teacher or student not found.';
+        }
+
+        this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
         this.isSaving.set(false);
       },
     });
