@@ -27,7 +27,7 @@ export enum UserRole {
  */
 @Entity('users')
 @TableInheritance({
-  column: { type: 'enum', name: 'type', enum: ['Teacher', 'Student'] },
+  column: { type: 'enum', name: 'type', enum: ['teacher', 'student'] },
 })
 export class User {
   @PrimaryGeneratedColumn('uuid')
