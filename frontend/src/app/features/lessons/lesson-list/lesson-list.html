@@ -67,7 +67,7 @@
     <div class="filters">
       <mat-form-field>
         <mat-label>Status</mat-label>
-        <mat-select [(value)]="selectedStatus" (selectionChange)="onFilterChange()">
+        <mat-select [value]="selectedStatus()" (selectionChange)="onStatusChange($event.value)">
           @for (option of statusOptions; track option.value) {
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
@@ -76,7 +76,7 @@
 
       <mat-form-field>
         <mat-label>Teacher</mat-label>
-        <mat-select [(value)]="selectedTeacher" (selectionChange)="onFilterChange()">
+        <mat-select [value]="selectedTeacher()" (selectionChange)="onTeacherChange($event.value)">
           <mat-option value="">All Teachers</mat-option>
           @for (teacher of teachers(); track teacher.id) {
             <mat-option [value]="teacher.id">
@@ -88,7 +88,7 @@
 
       <mat-form-field>
         <mat-label>Student</mat-label>
-        <mat-select [(value)]="selectedStudent" (selectionChange)="onFilterChange()">
+        <mat-select [value]="selectedStudent()" (selectionChange)="onStudentChange($event.value)">
           <mat-option value="">All Students</mat-option>
           @for (student of students(); track student.id) {
             <mat-option [value]="student.id">
@@ -122,7 +122,7 @@
 
       <mat-form-field>
         <mat-label>Sort By</mat-label>
-        <mat-select [(value)]="selectedSort" (selectionChange)="onSortChange()">
+        <mat-select [value]="selectedSort()" (selectionChange)="onSortSelectChange($event.value)">
           @for (option of sortOptions; track option.value) {
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }

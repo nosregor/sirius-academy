@@ -22,6 +22,8 @@ mat-card-header {
 
 mat-card-content {
   padding: 16px;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .stats-summary {
@@ -130,16 +132,15 @@ mat-card-content {
 }
 
 .lessons-container {
-  display: grid;
-  gap: 16px;
-
-  @media (min-width: 960px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .date-group {
   margin-bottom: 32px;
+  width: 100%;
+  box-sizing: border-box;
 
   &:last-child {
     margin-bottom: 0;
@@ -183,8 +184,14 @@ mat-card-content {
 
   .date-group-lessons {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: 960px) {
+      grid-template-columns: 1fr;
+    }
   }
 }
 

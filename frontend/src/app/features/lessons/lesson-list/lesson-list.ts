@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -38,6 +39,7 @@ export interface GroupedLessons {
     MatIconModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatInputModule,
     MatDialogModule,
     MatSnackBarModule,
     MatDatepickerModule,
@@ -157,7 +159,18 @@ export class LessonList implements OnInit {
     });
   }
 
-  onFilterChange(): void {
+  onStatusChange(value: LessonStatus | ''): void {
+    this.selectedStatus.set(value);
+    this.loadLessons();
+  }
+
+  onTeacherChange(value: string): void {
+    this.selectedTeacher.set(value);
+    this.loadLessons();
+  }
+
+  onStudentChange(value: string): void {
+    this.selectedStudent.set(value);
     this.loadLessons();
   }
 
@@ -171,7 +184,8 @@ export class LessonList implements OnInit {
     this.loadLessons();
   }
 
-  onSortChange(): void {
+  onSortSelectChange(value: string): void {
+    this.selectedSort.set(value);
     this.loadLessons();
   }
 
@@ -257,7 +271,21 @@ export class LessonList implements OnInit {
       });
     });
 
-    return result.sort((a, b) => b.date.localeCompare(a.date));
+    const futureAndToday: GroupedLessons[] = [];
+    const past: GroupedLessons[] = [];
+
+    result.forEach((group) => {
+      if (group.date >= today) {
+        futureAndToday.push(group);
+      } else {
+        past.push(group);
+      }
+    });
+
+    futureAndToday.sort((a, b) => a.date.localeCompare(b.date));
+    past.sort((a, b) => b.date.localeCompare(a.date));
+
+    return [...futureAndToday, ...past];
   }
 
   onCreateLesson(): void {
