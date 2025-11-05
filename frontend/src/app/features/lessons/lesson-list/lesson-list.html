@@ -1,6 +1,6 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>Lessons</mat-card-title>
+    <mat-card-title>Lessons Management</mat-card-title>
     <div class="spacer"></div>
     <button mat-raised-button color="primary" (click)="onCreateLesson()">
       <mat-icon>add</mat-icon>
@@ -9,6 +9,48 @@
   </mat-card-header>
 
   <mat-card-content>
+    <!-- Summary Stats -->
+    @if (!isLoading()) {
+      <div class="stats-summary">
+        <div class="stat-card pending">
+          <div class="stat-icon">
+            <mat-icon>schedule</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ getStatCount('pending') }}</div>
+            <div class="stat-label">Pending Requests</div>
+          </div>
+        </div>
+        <div class="stat-card confirmed">
+          <div class="stat-icon">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ getStatCount('confirmed') }}</div>
+            <div class="stat-label">Confirmed</div>
+          </div>
+        </div>
+        <div class="stat-card completed">
+          <div class="stat-icon">
+            <mat-icon>done_all</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ getStatCount('completed') }}</div>
+            <div class="stat-label">Completed</div>
+          </div>
+        </div>
+        <div class="stat-card total">
+          <div class="stat-icon">
+            <mat-icon>event_note</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ allLessons().length }}</div>
+            <div class="stat-label">Total Lessons</div>
+          </div>
+        </div>
+      </div>
+    }
+
     <!-- Filters -->
     <div class="filters">
       <mat-form-field>

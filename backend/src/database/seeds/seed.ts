@@ -203,24 +203,37 @@ async function seedLessons(
     const w = windows[windowIndex]!;
     const { start, end } = w;
 
-    // Determine status based on date (past = completed/cancelled, future = pending/confirmed)
+    // Determine status and creator based on date
     const now = new Date();
     let status: LessonStatus;
+    let createdBy: 'teacher' | 'student';
+
     if (end < now) {
       // Past lessons - mostly completed, some cancelled
       status = faker.helpers.weightedArrayElement([
         { weight: 8, value: LessonStatus.COMPLETED },
         { weight: 2, value: LessonStatus.CANCELLED },
       ]);
+      // Past lessons could be created by either
+      createdBy = faker.helpers.arrayElement(['teacher', 'student'] as const);
     } else if (start < now) {
       // Currently ongoing - should be confirmed
       status = LessonStatus.CONFIRMED;
+      // Confirmed lessons could be created by either
+      createdBy = faker.helpers.arrayElement(['teacher', 'student'] as const);
     } else {
       // Future lessons - mix of pending and confirmed
-      status = faker.helpers.weightedArrayElement([
+      const futureStatus = faker.helpers.weightedArrayElement([
         { weight: 3, value: LessonStatus.PENDING },
         { weight: 7, value: LessonStatus.CONFIRMED },
       ]);
+      status = futureStatus;
+      // Pending = always student-created, Confirmed = teacher-created or student-confirmed
+      if (status === LessonStatus.PENDING) {
+        createdBy = 'student';
+      } else {
+        createdBy = faker.helpers.arrayElement(['teacher', 'student'] as const);
+      }
     }
 
     const l = lessonRepo.create({
@@ -229,6 +242,7 @@ async function seedLessons(
       startTime: start,
       endTime: end,
       status,
+      createdBy,
     } as Lesson);
     lessons.push(l);
   }

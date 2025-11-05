@@ -109,6 +109,7 @@ export class LessonsService {
       startTime,
       endTime,
       status: initialStatus,
+      createdBy: creatorRole === UserRole.TEACHER ? 'teacher' : 'student',
     });
 
     try {

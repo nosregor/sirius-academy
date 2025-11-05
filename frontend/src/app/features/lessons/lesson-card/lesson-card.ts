@@ -53,6 +53,14 @@ export class LessonCard {
     return `status-${status}`;
   }
 
+  getCreatorClass(createdBy: 'teacher' | 'student'): string {
+    return `creator-${createdBy}`;
+  }
+
+  getCreatorLabel(createdBy: 'teacher' | 'student'): string {
+    return createdBy === 'teacher' ? 'Teacher Created' : 'Student Requested';
+  }
+
   getTeacherName(): string {
     const teacher = this.lesson().teacher;
     return teacher ? `${teacher.firstName} ${teacher.lastName}` : 'Unknown';

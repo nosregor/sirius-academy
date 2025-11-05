@@ -12,11 +12,125 @@ mat-card {
         align-items: center;
         justify-content: space-between;
         gap: 12px;
+        flex-wrap: wrap;
 
+        .lesson-participants {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex: 1;
+          min-width: 0;
+
+          .participant {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+
+            .participant-icon {
+              font-size: 20px;
+              width: 20px;
+              height: 20px;
+              flex-shrink: 0;
+
+              &.teacher-icon {
+                color: #1976d2;
+              }
+
+              &.student-icon {
+                color: #388e3c;
+              }
+            }
+
+            .participant-info {
+              display: flex;
+              flex-direction: column;
+              min-width: 0;
+
+              .participant-label {
+                font-size: 11px;
+                color: rgba(0, 0, 0, 0.6);
+                text-transform: uppercase;
+                font-weight: 500;
+                line-height: 1.2;
+              }
+
+              .participant-name {
+                font-size: 14px;
+                font-weight: 500;
+                color: rgba(0, 0, 0, 0.87);
+                line-height: 1.3;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+            }
+          }
+
+          .arrow-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+          }
+        }
+
+        .badges {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .creator-chip,
         .status-chip {
           font-size: 11px;
           min-height: 24px;
-          padding: 4px 8px;
+          padding: 4px 12px;
+          font-weight: 500;
+          text-transform: capitalize;
+          border-radius: 12px;
+        }
+
+        .creator-chip {
+          &.creator-teacher {
+            background-color: #e8eaf6;
+            color: #3f51b5;
+            border: 1px solid #9fa8da;
+          }
+
+          &.creator-student {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+            border: 1px solid #ce93d8;
+          }
+        }
+
+        .status-chip {
+          &.status-pending {
+            background-color: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffb74d;
+          }
+
+          &.status-confirmed {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #64b5f6;
+          }
+
+          &.status-completed {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #81c784;
+          }
+
+          &.status-cancelled {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+          }
         }
       }
     }

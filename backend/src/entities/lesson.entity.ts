@@ -59,6 +59,13 @@ export class Lesson {
   })
   status!: LessonStatus;
 
+  @Column({
+    type: 'enum',
+    enum: ['teacher', 'student'],
+    name: 'created_by',
+  })
+  createdBy!: 'teacher' | 'student';
+
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt!: Date;
 

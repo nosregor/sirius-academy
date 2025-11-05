@@ -2,10 +2,31 @@
   <mat-card-header>
     <mat-card-title>
       <div class="lesson-title">
-        <span>{{ getTeacherName() }} → {{ getStudentName() }}</span>
-        <mat-chip class="status-chip" [ngClass]="getStatusClass(lesson().status)">
-          {{ lesson().status }}
-        </mat-chip>
+        <div class="lesson-participants">
+          <div class="participant">
+            <mat-icon class="participant-icon teacher-icon">library_music</mat-icon>
+            <div class="participant-info">
+              <span class="participant-label">Teacher</span>
+              <span class="participant-name">{{ getTeacherName() }}</span>
+            </div>
+          </div>
+          <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+          <div class="participant">
+            <mat-icon class="participant-icon student-icon">groups</mat-icon>
+            <div class="participant-info">
+              <span class="participant-label">Student</span>
+              <span class="participant-name">{{ getStudentName() }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="badges">
+          <mat-chip class="creator-chip" [ngClass]="getCreatorClass(lesson().createdBy)">
+            {{ getCreatorLabel(lesson().createdBy) }}
+          </mat-chip>
+          <mat-chip class="status-chip" [ngClass]="getStatusClass(lesson().status)">
+            {{ lesson().status }}
+          </mat-chip>
+        </div>
       </div>
     </mat-card-title>
     <mat-card-subtitle>

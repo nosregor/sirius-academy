@@ -16,6 +16,7 @@ export interface Lesson {
   startTime: string;
   endTime: string;
   status: LessonStatus;
+  createdBy: 'teacher' | 'student';
   createdAt: string;
   updatedAt: string;
   teacher?: {
@@ -116,4 +117,3 @@ export class LessonsService {
     return this.apiService.delete<void>(`${this.endpoint}/${id}`);
   }
 }
-
