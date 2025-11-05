@@ -27,7 +27,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["../node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.scss"]
+            "styles": [
+              "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/styles.scss"
+            ]
           },
           "configurations": {
             "production": {
@@ -80,7 +83,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["../node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.scss"]
+            "styles": [
+              "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/styles.scss"
+            ]
           }
         }
       }
