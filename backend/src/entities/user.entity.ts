@@ -7,6 +7,8 @@ import {
   DeleteDateColumn,
   BeforeInsert,
   BeforeUpdate,
+  TableInheritance,
+  Index,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
@@ -20,9 +22,11 @@ export enum UserRole {
 
 /**
  * Base User entity
- * Serves as a parent entity for Teacher and Student with common fields
+ * Uses Single Table Inheritance (STI) with discriminator column
+ * Teacher and Student entities extend this using @ChildEntity
  */
 @Entity('users')
+@TableInheritance({ column: { type: 'enum', name: 'type', enum: UserRole } })
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -42,12 +46,16 @@ export class User {
   })
   role!: UserRole;
 
+  @Column({ type: 'boolean', default: false, select: false })
+  isPasswordHashed!: boolean;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
+  @Index()
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   deletedAt!: Date | null;
 
@@ -56,9 +64,10 @@ export class User {
    */
   @BeforeInsert()
   async hashPasswordBeforeInsert(): Promise<void> {
-    if (this.password) {
+    if (this.password && !this.isPasswordHashed) {
       const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
       this.password = await bcrypt.hash(this.password, saltRounds);
+      this.isPasswordHashed = true;
     }
   }
 
@@ -68,9 +77,10 @@ export class User {
   @BeforeUpdate()
   async hashPasswordBeforeUpdate(): Promise<void> {
     // Only hash if password has been modified and isn't already hashed
-    if (this.password && !this.password.startsWith('$2b$')) {
+    if (this.password && !this.isPasswordHashed) {
       const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
       this.password = await bcrypt.hash(this.password, saltRounds);
+      this.isPasswordHashed = true;
     }
   }
 

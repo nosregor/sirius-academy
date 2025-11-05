@@ -1,13 +1,14 @@
-import { Entity, Column, ManyToMany, OneToMany } from 'typeorm';
+import { ChildEntity, Column, ManyToMany, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Teacher } from './teacher.entity';
 import { Lesson } from './lesson.entity';
 
 /**
  * Student entity
+ * Uses Single Table Inheritance - stored in 'users' table with type discriminator
  * Extends User entity with student-specific fields and relationships
  */
-@Entity('students')
+@ChildEntity()
 export class Student extends User {
   @Column({ type: 'varchar', length: 100 })
   instrument!: string;
