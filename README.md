@@ -150,8 +150,8 @@ PORT=3000
 
 DB_HOST=localhost
 DB_PORT=5432
-DB_USERNAME=your_db_user
-DB_PASSWORD=your_db_password
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
 DB_DATABASE=sirius_academy
 
 TYPEORM_SYNCHRONIZE=false
@@ -293,55 +293,9 @@ npm run build:frontend
 
 ## 📚 API Documentation
 
-### Base URL
-
 ```
-http://localhost:3000/api/v1
+http://localhost:3000/api/v1/docs
 ```
-
-### Teachers API
-
-- `POST /teachers` - Create a new teacher
-- `GET /teachers` - List all teachers
-- `GET /teachers/:id` - Get teacher details
-- `PUT /teachers/:id` - Update teacher
-- `DELETE /teachers/:id` - Delete teacher (soft delete)
-- `GET /teachers/:id/students` - List teacher's students
-
-### Students API
-
-- `POST /students` - Create a new student
-- `GET /students` - List all students
-- `GET /students/:id` - Get student details
-- `PUT /students/:id` - Update student
-- `DELETE /students/:id` - Delete student (soft delete)
-- `GET /students/:id/teachers` - List student's teachers
-- `POST /students/:studentId/teachers/:teacherId` - Assign teacher to student
-- `DELETE /students/:studentId/teachers/:teacherId` - Unassign teacher from student
-
-### Lessons API
-
-- `POST /lessons` - Create a lesson (status depends on creator role)
-- `GET /lessons` - List all lessons
-- `GET /lessons/:id` - Get lesson details
-- `GET /lessons/teacher/:teacherId` - List teacher's lessons
-- `GET /lessons/student/:studentId` - List student's lessons
-- `PUT /lessons/:id/confirm` - Confirm pending lesson (teacher only)
-- `PUT /lessons/:id/reject` - Reject lesson request
-- `PUT /lessons/:id/complete` - Mark lesson as completed
-- `PUT /lessons/:id/cancel` - Cancel lesson
-- `DELETE /lessons/:id` - Delete lesson
-
-### Bulk Operations API
-
-- `POST /bulk/students` - Create multiple students
-- `POST /bulk/lessons` - Create multiple lessons
-
-### Export API
-
-- `GET /export/teachers` - Export teachers as CSV
-- `GET /export/students` - Export students as CSV
-- `GET /export/lessons` - Export lessons as CSV (with filters)
 
 ## 🧪 Testing
 
@@ -913,40 +867,6 @@ docker-compose restart postgres
 docker-compose down -v
 docker-compose up -d
 ```
-
-## 📝 Scripts Reference
-
-### Root Level
-
-- `npm run install:all` - Install all dependencies
-- `npm run start:backend` - Start backend in dev mode
-- `npm run start:frontend` - Start frontend in dev mode
-- `npm run build:backend` - Build backend for production
-- `npm run build:frontend` - Build frontend for production
-- `npm run lint` - Lint all code
-- `npm run format` - Format all code with Prettier
-
-### Backend
-
-- `npm run start:dev` - Start with hot reload
-- `npm run build` - Build for production
-- `npm test` - Run unit tests
-- `npm run test:e2e` - Run E2E tests
-- `npm run lint` - Lint backend code
-- `npm run seed` - Run database seeds
-
-### Frontend
-
-- `npm start` - Start dev server
-- `npm run build` - Build for production
-- `npm test` - Run unit tests
-- `npm run lint` - Lint frontend code
-
-## 🤝 Contributing
-
-1. Use conventional commits for git messages
-2. Ensure all tests pass before submitting PR
-3. Run linting and formatting before committing
 
 ## 📄 License
 
