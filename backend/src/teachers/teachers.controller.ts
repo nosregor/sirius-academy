@@ -15,7 +15,7 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { Teacher } from '@entities/teacher.entity';
 import { Student } from '@entities/student.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 
 /**
  * TeachersController
@@ -30,18 +30,34 @@ export class TeachersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Create teacher',
+    description: 'Create a new teacher with instrument and experience.',
+  })
+  @ApiResponse({ status: 201, description: 'Teacher created.' })
   createTeacher(@Body() createTeacherDto: CreateTeacherDto): Promise<Teacher> {
     return this.teachersService.createTeacher(createTeacherDto);
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'List teachers',
+    description: 'Retrieve all teachers.',
+  })
+  @ApiResponse({ status: 200, description: 'List of teachers returned.' })
   findAllTeachers(): Promise<Teacher[]> {
     return this.teachersService.findAllTeachers();
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get teacher by ID',
+    description: 'Retrieve a single teacher by UUID.',
+  })
+  @ApiParam({ name: 'id', description: 'Teacher UUID', format: 'uuid' })
+  @ApiResponse({ status: 200, description: 'Teacher found.' })
   findTeacherById(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Teacher> {
@@ -50,6 +66,12 @@ export class TeachersController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Update teacher',
+    description: 'Update an existing teacher by UUID.',
+  })
+  @ApiParam({ name: 'id', description: 'Teacher UUID', format: 'uuid' })
+  @ApiResponse({ status: 200, description: 'Teacher updated.' })
   updateTeacher(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateTeacherDto: UpdateTeacherDto,
@@ -59,12 +81,24 @@ export class TeachersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Delete teacher',
+    description: 'Soft delete a teacher by UUID.',
+  })
+  @ApiParam({ name: 'id', description: 'Teacher UUID', format: 'uuid' })
+  @ApiResponse({ status: 204, description: 'Teacher deleted.' })
   deleteTeacher(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     return this.teachersService.deleteTeacher(id);
   }
 
   @Get(':id/students')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "List teacher's students",
+    description: 'Retrieve all students assigned to a teacher.',
+  })
+  @ApiParam({ name: 'id', description: 'Teacher UUID', format: 'uuid' })
+  @ApiResponse({ status: 200, description: "Teacher's students returned." })
   findStudentsByTeacher(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Student[]> {

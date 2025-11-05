@@ -15,7 +15,7 @@ import { LessonsService } from './lessons.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonStatusDto } from './dto/update-lesson-status.dto';
 import { Lesson, LessonStatus } from '@entities/lesson.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 /**
  * LessonsController
@@ -34,6 +34,8 @@ export class LessonsController {
    */
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create lesson', description: 'Create a lesson. Teacher-created → confirmed; Student-created → pending.' })
+  @ApiResponse({ status: 201, description: 'Lesson created.' })
   createLesson(@Body() createLessonDto: CreateLessonDto): Promise<Lesson> {
     return this.lessonsService.createLesson(createLessonDto);
   }
@@ -44,6 +46,11 @@ export class LessonsController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'List lessons', description: 'Retrieve lessons with optional filters.' })
+  @ApiQuery({ name: 'status', required: false, enum: ['pending', 'confirmed', 'cancelled', 'completed'] })
+  @ApiQuery({ name: 'teacherId', required: false, description: 'Teacher UUID', format: 'uuid' })
+  @ApiQuery({ name: 'studentId', required: false, description: 'Student UUID', format: 'uuid' })
+  @ApiResponse({ status: 200, description: 'List of lessons returned.' })
   findAllLessons(
     @Query('status') status?: LessonStatus,
     @Query('teacherId') teacherId?: string,
@@ -59,6 +66,8 @@ export class LessonsController {
    */
   @Get('teacher/:teacherId')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "List teacher's lessons", description: 'Retrieve all lessons for a teacher.' })
+  @ApiParam({ name: 'teacherId', description: 'Teacher UUID', format: 'uuid' })
   findLessonsByTeacher(
     @Param('teacherId', new ParseUUIDPipe()) teacherId: string,
   ): Promise<Lesson[]> {
@@ -72,6 +81,8 @@ export class LessonsController {
    */
   @Get('student/:studentId')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "List student's lessons", description: 'Retrieve all lessons for a student.' })
+  @ApiParam({ name: 'studentId', description: 'Student UUID', format: 'uuid' })
   findLessonsByStudent(
     @Param('studentId', new ParseUUIDPipe()) studentId: string,
   ): Promise<Lesson[]> {
@@ -85,6 +96,8 @@ export class LessonsController {
    */
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get lesson by ID', description: 'Retrieve a single lesson by UUID.' })
+  @ApiParam({ name: 'id', description: 'Lesson UUID', format: 'uuid' })
   findLessonById(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Lesson> {
@@ -97,6 +110,9 @@ export class LessonsController {
    */
   @Put(':id/confirm')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Confirm lesson', description: 'Confirm a pending lesson (teacher action).' })
+  @ApiParam({ name: 'id', description: 'Lesson UUID', format: 'uuid' })
+  @ApiResponse({ status: 200, description: 'Lesson confirmed.' })
   confirmLesson(@Param('id', new ParseUUIDPipe()) id: string): Promise<Lesson> {
     return this.lessonsService.confirmLesson(id);
   }
@@ -107,6 +123,9 @@ export class LessonsController {
    */
   @Put(':id/reject')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reject lesson', description: 'Reject a pending lesson (teacher action).' })
+  @ApiParam({ name: 'id', description: 'Lesson UUID', format: 'uuid' })
+  @ApiResponse({ status: 200, description: 'Lesson rejected.' })
   rejectLesson(@Param('id', new ParseUUIDPipe()) id: string): Promise<Lesson> {
     return this.lessonsService.rejectLesson(id);
   }
@@ -117,6 +136,9 @@ export class LessonsController {
    */
   @Put(':id/complete')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Complete lesson', description: 'Mark a confirmed lesson as completed.' })
+  @ApiParam({ name: 'id', description: 'Lesson UUID', format: 'uuid' })
+  @ApiResponse({ status: 200, description: 'Lesson completed.' })
   completeLesson(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Lesson> {
@@ -129,6 +151,9 @@ export class LessonsController {
    */
   @Put(':id/cancel')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cancel lesson', description: 'Cancel a lesson.' })
+  @ApiParam({ name: 'id', description: 'Lesson UUID', format: 'uuid' })
+  @ApiResponse({ status: 200, description: 'Lesson cancelled.' })
   cancelLesson(@Param('id', new ParseUUIDPipe()) id: string): Promise<Lesson> {
     return this.lessonsService.cancelLesson(id);
   }
@@ -139,6 +164,8 @@ export class LessonsController {
    */
   @Put(':id/status')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update lesson status', description: 'Set lesson status to pending, confirmed, completed, or cancelled.' })
+  @ApiParam({ name: 'id', description: 'Lesson UUID', format: 'uuid' })
   updateLessonStatus(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateLessonStatusDto: UpdateLessonStatusDto,
@@ -152,6 +179,9 @@ export class LessonsController {
    */
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete lesson', description: 'Delete a lesson by UUID.' })
+  @ApiParam({ name: 'id', description: 'Lesson UUID', format: 'uuid' })
+  @ApiResponse({ status: 204, description: 'Lesson deleted.' })
   deleteLesson(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     return this.lessonsService.deleteLesson(id);
   }
