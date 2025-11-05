@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { databaseConfig } from './config/database.config';
+import { TeachersModule } from './teachers/teachers.module';
+import { StudentsModule } from './students/students.module';
 
 /**
  * Root application module
@@ -30,6 +32,8 @@ import { databaseConfig } from './config/database.config';
         return config;
       },
     }),
+    TeachersModule,
+    StudentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

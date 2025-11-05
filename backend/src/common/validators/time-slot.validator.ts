@@ -76,7 +76,7 @@ export class IsValidLessonDurationConstraint
     return durationMinutes >= 15 && durationMinutes <= 240;
   }
 
-  defaultMessage(args: ValidationArguments): string {
+  defaultMessage(): string {
     return 'Lesson duration must be between 15 minutes and 4 hours';
   }
 }
@@ -116,7 +116,7 @@ export class IsAfterStartTimeConstraint
     return endTime.getTime() > startTime.getTime();
   }
 
-  defaultMessage(args: ValidationArguments): string {
+  defaultMessage(): string {
     return 'End time must be after start time';
   }
 }
