@@ -207,8 +207,8 @@ cp .env.example .env
 The default configuration should work:
 
 ```env
-VITE_API_URL=http://localhost:3000/api/v1
-VITE_ENVIRONMENT=development
+API_URL=http://localhost:3000/api/v1
+ENVIRONMENT=development
 ```
 
 ## 🗄️ Database Setup
