@@ -1,21 +1,34 @@
 # Sirius Academy
 
-A fullstack monorepo application for managing teachers, students, and lessons in educational institutions. Built with **NestJS**, **Angular**, **PostgreSQL**, and **TypeScript** with a focus on clean architecture and scalable design patterns.
+> A fullstack education management platform designed for music schools and academies to manage teachers, students, and lessons. Built as a technical demonstration of clean modular architecture, scalable backend design, and modern frontend development. This project showcases TypeScript-first development, database design best practices, and a focus on maintainability and type safety throughout the stack.
 
 ## 🚀 Features
+
+### Core Features
 
 - **Teacher Management**: Complete CRUD operations for teacher profiles with instrument specialization
 - **Student Management**: Full student lifecycle management with teacher assignments
 - **Lesson Scheduling**: Dual workflow system (teacher-initiated and student-requested lessons)
 - **Many-to-Many Relationships**: Students can be assigned to multiple teachers
 - **Real-time Validation**: Time slot validation, overlap detection, and business rule enforcement
+
+### 🎯 Extended Beyond Requirements
+
 - **Bulk Operations**: Efficient bulk creation of students and lessons
 - **Data Export**: CSV export functionality for all entities
-- **Modern UI**: Angular Material-based responsive interface
+- **Advanced Validation**: Multi-layer validation with database constraints and custom decorators
+- **Soft Deletes**: Preserves historical data for teachers and students
+- **Modern UI**: Angular Material-based responsive interface with Angular Signals
+
+### Technical Excellence
+
 - **Type Safety**: Strict TypeScript configuration across the entire stack
+- **Performance**: Strategic database indexing for common query patterns
+- **Error Handling**: Global exception filter with consistent error responses
 
 ## 📋 Table of Contents
 
+- [UI Preview](#ui-preview)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
 - [Project Structure](#project-structure)
@@ -26,6 +39,25 @@ A fullstack monorepo application for managing teachers, students, and lessons in
 - [API Documentation](#api-documentation)
 - [Testing](#testing)
 - [Design Decisions](#design-decisions)
+
+## 🖥️ UI Preview
+
+Visual overview of the Sirius Academy interface:
+
+### Teachers Management
+
+![Teachers List](docs/teachers-list.png)
+_Teacher management dashboard_
+
+### Lesson Scheduling
+
+![Lesson Management](docs/lesson-schedule.png)
+_Lesson management with status indicators_
+
+### Student Management
+
+![Students List](docs/students-list.png)
+_Student profiles with assigned teachers_
 
 ## 🛠️ Tech Stack
 
@@ -277,9 +309,9 @@ npm start
 
 ### Access the Application
 
-- **Frontend**: http://localhost:4200
-- **Backend API**: http://localhost:3000/api/v1
-- **API Documentation** (if Swagger configured): http://localhost:3000/api/docs
+- **Frontend**: [http://localhost:4200](http://localhost:4200)
+- **Backend API**: [http://localhost:3000/api/v1](http://localhost:3000/api/v1)
+- **API Documentation** (if Swagger configured): [http://localhost:3000/api/v1/docs](http://localhost:3000/api/v1/docs)
 
 ### Production Build
 
@@ -289,12 +321,6 @@ npm run build:backend
 
 # Frontend
 npm run build:frontend
-```
-
-## 📚 API Documentation
-
-```
-http://localhost:3000/api/v1/docs
 ```
 
 ## 🧪 Testing
@@ -336,7 +362,7 @@ npm run format
 
 ## 🎨 Design Decisions
 
-This section documents the key architectural and design decisions made during the development of Sirius Academy, explaining the rationale behind each choice.
+> The following section explains key architectural choices made during development, with a focus on scalability, maintainability, and production-readiness. Each decision documents the rationale, implementation approach, and trade-offs considered.
 
 ### 1. Dual Lesson Workflow
 
