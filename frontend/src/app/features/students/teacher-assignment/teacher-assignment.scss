@@ -36,6 +36,8 @@ mat-dialog-content {
 
     mat-list-item {
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
 
       &:last-child {
         border-bottom: none;
@@ -47,6 +49,30 @@ mat-dialog-content {
 
         .recommended-icon {
           color: #4caf50;
+        }
+      }
+
+      ::ng-deep [matListItemMeta] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: center;
+      }
+
+      button[mat-icon-button] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+
+        mat-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          font-size: 24px;
+          line-height: 24px;
         }
       }
     }
