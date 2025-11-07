@@ -83,7 +83,6 @@ mat-card {
           flex-wrap: wrap;
         }
 
-        .creator-chip,
         .status-chip {
           font-size: 11px;
           min-height: 24px;
@@ -91,23 +90,7 @@ mat-card {
           font-weight: 500;
           text-transform: capitalize;
           border-radius: 12px;
-        }
 
-        .creator-chip {
-          &.creator-teacher {
-            background-color: #e8eaf6;
-            color: #3f51b5;
-            border: 1px solid #9fa8da;
-          }
-
-          &.creator-student {
-            background-color: #f3e5f5;
-            color: #7b1fa2;
-            border: 1px solid #ce93d8;
-          }
-        }
-
-        .status-chip {
           &.status-pending {
             background-color: #fff3e0;
             color: #e65100;

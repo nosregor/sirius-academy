@@ -57,9 +57,13 @@ export class LessonForm implements OnInit {
   isSaving = signal<boolean>(false);
   selectedTeacherId = signal<string>('');
 
-  readonly creatorRoleOptions = [
-    { value: 'teacher', label: 'Teacher' },
-    { value: 'student', label: 'Student' },
+  readonly initialStatusOptions = [
+    { value: 'teacher', label: 'Confirmed', hint: 'Lesson will be created as confirmed' },
+    {
+      value: 'student',
+      label: 'Pending Request',
+      hint: 'Lesson will be created as pending (requires confirmation)',
+    },
   ];
 
   readonly minDate = new Date();
@@ -96,7 +100,7 @@ export class LessonForm implements OnInit {
       startHour: [defaultHour, Validators.required],
       startMinute: [defaultMinute, Validators.required],
       duration: [60, [Validators.required, Validators.min(15), Validators.max(240)]],
-      creatorRole: ['teacher', Validators.required],
+      creatorRole: ['student', Validators.required],
     });
 
     this.lessonForm.get('startHour')?.valueChanges.subscribe(() => this.updateStartTime());

@@ -111,7 +111,6 @@ describe('LessonsService', () => {
         startTime: createLessonDto.startTime,
         endTime: createLessonDto.endTime,
         status: LessonStatus.CONFIRMED,
-        createdBy: 'teacher',
       });
     });
 

@@ -240,23 +240,6 @@ mat-card-content {
       }
     }
 
-    .creator-badge {
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 500;
-
-      &.creator-teacher {
-        background-color: #e8eaf6;
-        color: #3f51b5;
-      }
-
-      &.creator-student {
-        background-color: #f3e5f5;
-        color: #7b1fa2;
-      }
-    }
-
     .action-buttons {
       display: flex;
       gap: 4px;

@@ -27,7 +27,6 @@ export class LessonsService {
     const { teacherId, studentId, startTime, endTime, creatorRole } =
       createLessonDto;
 
-    // Validate teacher exists
     const teacher = await this.teachersRepository.findOne({
       where: { id: teacherId },
       relations: ['students'],
@@ -37,7 +36,6 @@ export class LessonsService {
       throw new NotFoundException(`Teacher with id ${teacherId} not found`);
     }
 
-    // Validate student exists
     const student = await this.studentsRepository.findOne({
       where: { id: studentId },
     });
@@ -93,7 +91,6 @@ export class LessonsService {
       startTime,
       endTime,
       status: initialStatus,
-      createdBy: creatorRole === UserRole.TEACHER ? 'teacher' : 'student',
     });
 
     try {

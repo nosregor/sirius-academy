@@ -192,28 +192,19 @@ async function seedLessons(
 
     const now = new Date();
     let status: LessonStatus;
-    let createdBy: 'teacher' | 'student';
 
     if (end < now) {
       status = faker.helpers.weightedArrayElement([
         { weight: 8, value: LessonStatus.COMPLETED },
         { weight: 2, value: LessonStatus.CANCELLED },
       ]);
-      createdBy = faker.helpers.arrayElement(['teacher', 'student'] as const);
     } else if (start < now) {
       status = LessonStatus.CONFIRMED;
-      createdBy = faker.helpers.arrayElement(['teacher', 'student'] as const);
     } else {
-      const futureStatus = faker.helpers.weightedArrayElement([
+      status = faker.helpers.weightedArrayElement([
         { weight: 3, value: LessonStatus.PENDING },
         { weight: 7, value: LessonStatus.CONFIRMED },
       ]);
-      status = futureStatus;
-      if (status === LessonStatus.PENDING) {
-        createdBy = 'student';
-      } else {
-        createdBy = faker.helpers.arrayElement(['teacher', 'student'] as const);
-      }
     }
 
     const l = lessonRepo.create({
@@ -222,7 +213,6 @@ async function seedLessons(
       startTime: start,
       endTime: end,
       status,
-      createdBy,
     } as Lesson);
     lessons.push(l);
   }

@@ -20,9 +20,6 @@
           </div>
         </div>
         <div class="badges">
-          <mat-chip class="creator-chip" [ngClass]="getCreatorClass(lesson().createdBy)">
-            {{ getCreatorLabel(lesson().createdBy) }}
-          </mat-chip>
           <mat-chip class="status-chip" [ngClass]="getStatusClass(lesson().status)">
             {{ lesson().status }}
           </mat-chip>

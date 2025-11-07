@@ -98,16 +98,19 @@
           </mat-form-field>
 
           <mat-form-field class="full-width">
-            <mat-label>Creator Role</mat-label>
+            <mat-label>Initial Status</mat-label>
             <mat-select formControlName="creatorRole">
-              @for (option of creatorRoleOptions; track option.value) {
+              @for (option of initialStatusOptions; track option.value) {
                 <mat-option [value]="option.value">{{ option.label }}</mat-option>
               }
             </mat-select>
             @if (getErrorMessage('creatorRole')) {
               <mat-error>{{ getErrorMessage('creatorRole') }}</mat-error>
             }
-            <mat-hint>Teacher creates confirmed lessons, student creates pending requests</mat-hint>
+            <mat-hint
+              >Choose whether the lesson should be confirmed immediately or pending
+              confirmation</mat-hint
+            >
           </mat-form-field>
         </div>
 

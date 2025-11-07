@@ -79,15 +79,7 @@ export class LessonList implements OnInit {
   selectedSort = signal<string>('date-desc');
   viewMode = signal<'cards' | 'table'>('cards');
 
-  readonly displayedColumns = [
-    'date',
-    'teacher',
-    'student',
-    'duration',
-    'status',
-    'createdBy',
-    'actions',
-  ];
+  readonly displayedColumns = ['date', 'teacher', 'student', 'duration', 'status', 'actions'];
 
   readonly statusOptions = [
     { value: '', label: 'All Statuses' },
