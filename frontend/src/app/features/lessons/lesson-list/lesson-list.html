@@ -1,22 +1,30 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Lessons Management</mat-card-title>
+<mat-card data-testid="lesson-list-card">
+  <mat-card-header data-testid="lesson-list-header">
+    <mat-card-title data-testid="lesson-list-title">Lessons Management</mat-card-title>
     <div class="spacer"></div>
     <mat-button-toggle-group
       [value]="viewMode()"
       (change)="onViewModeChange($event.value)"
       class="view-toggle"
+      data-testid="lesson-view-toggle"
+      aria-label="View mode"
     >
-      <mat-button-toggle value="cards">
+      <mat-button-toggle value="cards" data-testid="view-toggle-cards" aria-label="Cards view">
         <mat-icon>grid_view</mat-icon>
         Cards
       </mat-button-toggle>
-      <mat-button-toggle value="table">
+      <mat-button-toggle value="table" data-testid="view-toggle-table" aria-label="Table view">
         <mat-icon>view_list</mat-icon>
         Table
       </mat-button-toggle>
     </mat-button-toggle-group>
-    <button mat-raised-button color="primary" (click)="onCreateLesson()">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onCreateLesson()"
+      data-testid="lesson-create-button"
+      aria-label="Create new lesson"
+    >
       <mat-icon>add</mat-icon>
       New Lesson
     </button>
@@ -24,87 +32,112 @@
 
   <mat-card-content>
     @if (!isLoading()) {
-      <div class="stats-summary">
-        <div class="stat-card pending">
+      <div class="stats-summary" data-testid="lesson-stats-summary">
+        <div class="stat-card pending" data-testid="stat-pending">
           <div class="stat-icon">
             <mat-icon>schedule</mat-icon>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ getStatCount('pending') }}</div>
+            <div class="stat-value" data-testid="stat-pending-value">
+              {{ getStatCount('pending') }}
+            </div>
             <div class="stat-label">Pending Requests</div>
           </div>
         </div>
-        <div class="stat-card confirmed">
+        <div class="stat-card confirmed" data-testid="stat-confirmed">
           <div class="stat-icon">
             <mat-icon>check_circle</mat-icon>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ getStatCount('confirmed') }}</div>
+            <div class="stat-value" data-testid="stat-confirmed-value">
+              {{ getStatCount('confirmed') }}
+            </div>
             <div class="stat-label">Confirmed</div>
           </div>
         </div>
-        <div class="stat-card completed">
+        <div class="stat-card completed" data-testid="stat-completed">
           <div class="stat-icon">
             <mat-icon>done_all</mat-icon>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ getStatCount('completed') }}</div>
+            <div class="stat-value" data-testid="stat-completed-value">
+              {{ getStatCount('completed') }}
+            </div>
             <div class="stat-label">Completed</div>
           </div>
         </div>
-        <div class="stat-card total">
+        <div class="stat-card total" data-testid="stat-total">
           <div class="stat-icon">
             <mat-icon>event_note</mat-icon>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ allLessons().length }}</div>
+            <div class="stat-value" data-testid="stat-total-value">{{ allLessons().length }}</div>
             <div class="stat-label">Total Lessons</div>
           </div>
         </div>
       </div>
     }
 
-    <div class="filters">
-      <mat-form-field>
+    <div class="filters" data-testid="lesson-filters">
+      <mat-form-field data-testid="filter-status">
         <mat-label>Status</mat-label>
-        <mat-select [value]="selectedStatus()" (selectionChange)="onStatusChange($event.value)">
+        <mat-select
+          [value]="selectedStatus()"
+          (selectionChange)="onStatusChange($event.value)"
+          data-testid="filter-status-select"
+          aria-label="Filter by status"
+        >
           @for (option of statusOptions; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            <mat-option [value]="option.value" [data-testid]="'status-option-' + option.value">
+              {{ option.label }}
+            </mat-option>
           }
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field data-testid="filter-teacher">
         <mat-label>Teacher</mat-label>
-        <mat-select [value]="selectedTeacher()" (selectionChange)="onTeacherChange($event.value)">
-          <mat-option value="">All Teachers</mat-option>
+        <mat-select
+          [value]="selectedTeacher()"
+          (selectionChange)="onTeacherChange($event.value)"
+          data-testid="filter-teacher-select"
+          aria-label="Filter by teacher"
+        >
+          <mat-option value="" data-testid="teacher-option-all">All Teachers</mat-option>
           @for (teacher of teachers(); track teacher.id) {
-            <mat-option [value]="teacher.id">
+            <mat-option [value]="teacher.id" [data-testid]="'teacher-option-' + teacher.id">
               {{ teacher.firstName }} {{ teacher.lastName }}
             </mat-option>
           }
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field data-testid="filter-student">
         <mat-label>Student</mat-label>
-        <mat-select [value]="selectedStudent()" (selectionChange)="onStudentChange($event.value)">
-          <mat-option value="">All Students</mat-option>
+        <mat-select
+          [value]="selectedStudent()"
+          (selectionChange)="onStudentChange($event.value)"
+          data-testid="filter-student-select"
+          aria-label="Filter by student"
+        >
+          <mat-option value="" data-testid="student-option-all">All Students</mat-option>
           @for (student of students(); track student.id) {
-            <mat-option [value]="student.id">
+            <mat-option [value]="student.id" [data-testid]="'student-option-' + student.id">
               {{ student.firstName }} {{ student.lastName }}
             </mat-option>
           }
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field data-testid="filter-date">
         <mat-label>Date</mat-label>
         <input
           matInput
           [matDatepicker]="datePicker"
           [value]="selectedDate()"
           (dateChange)="onDateChange($event.value)"
+          data-testid="filter-date-input"
+          aria-label="Filter by date"
         />
         <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
         <mat-datepicker #datePicker></mat-datepicker>
@@ -114,17 +147,25 @@
             matSuffix
             (click)="clearDateFilter()"
             aria-label="Clear date filter"
+            data-testid="filter-date-clear"
           >
             <mat-icon>close</mat-icon>
           </button>
         }
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field data-testid="filter-sort">
         <mat-label>Sort By</mat-label>
-        <mat-select [value]="selectedSort()" (selectionChange)="onSortSelectChange($event.value)">
+        <mat-select
+          [value]="selectedSort()"
+          (selectionChange)="onSortSelectChange($event.value)"
+          data-testid="filter-sort-select"
+          aria-label="Sort lessons"
+        >
           @for (option of sortOptions; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            <mat-option [value]="option.value" [data-testid]="'sort-option-' + option.value">
+              {{ option.label }}
+            </mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -133,25 +174,33 @@
     @if (isLoading()) {
       <app-loading-spinner message="Loading lessons..."></app-loading-spinner>
     } @else if (lessons().length === 0) {
-      <div class="empty-state">
+      <div class="empty-state" data-testid="lesson-list-empty">
         <mat-icon>event_note</mat-icon>
-        <p>No lessons found</p>
-        <button mat-raised-button color="primary" (click)="onCreateLesson()">
+        <p data-testid="lesson-list-empty-message">No lessons found</p>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onCreateLesson()"
+          data-testid="lesson-create-first-button"
+          aria-label="Create first lesson"
+        >
           Create First Lesson
         </button>
       </div>
     } @else {
       @if (viewMode() === 'cards') {
-        <div class="lessons-container">
+        <div class="lessons-container" data-testid="lesson-cards-container">
           @for (group of groupedLessons(); track group.date) {
-            <div class="date-group">
+            <div class="date-group" [data-testid]="'lesson-group-' + group.date">
               <div class="date-header">
                 <mat-icon>calendar_today</mat-icon>
-                <h3>{{ group.displayDate }}</h3>
-                <span class="lesson-count">{{ group.lessons.length }} lesson(s)</span>
+                <h3 [data-testid]="'lesson-group-date-' + group.date">{{ group.displayDate }}</h3>
+                <span class="lesson-count" [data-testid]="'lesson-group-count-' + group.date">
+                  {{ group.lessons.length }} lesson(s)
+                </span>
               </div>
               <mat-divider></mat-divider>
-              <div class="date-group-lessons">
+              <div class="date-group-lessons" [data-testid]="'lesson-group-items-' + group.date">
                 @for (lesson of group.lessons; track lesson.id) {
                   <app-lesson-card
                     [lesson]="lesson"
@@ -160,6 +209,7 @@
                     (complete)="onComplete($event)"
                     (cancel)="onCancel($event)"
                     (delete)="onDelete($event)"
+                    [attr.data-testid]="'lesson-card-' + lesson.id"
                   />
                 }
               </div>
@@ -167,8 +217,13 @@
           }
         </div>
       } @else {
-        <div class="table-container">
-          <table mat-table [dataSource]="lessons()" class="lessons-table">
+        <div class="table-container" data-testid="lesson-table-container">
+          <table
+            mat-table
+            [dataSource]="lessons()"
+            class="lessons-table"
+            data-testid="lesson-table"
+          >
             <ng-container matColumnDef="date">
               <th mat-header-cell *matHeaderCellDef>Date & Time</th>
               <td mat-cell *matCellDef="let lesson">
@@ -209,13 +264,15 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let lesson">
-                <div class="action-buttons">
+                <div class="action-buttons" [data-testid]="'lesson-actions-' + lesson.id">
                   @if (lesson.status === 'pending') {
                     <button
                       mat-icon-button
                       color="primary"
                       (click)="onConfirm(lesson.id)"
                       matTooltip="Confirm"
+                      [data-testid]="'lesson-confirm-' + lesson.id"
+                      aria-label="Confirm lesson"
                     >
                       <mat-icon>check</mat-icon>
                     </button>
@@ -224,6 +281,8 @@
                       color="warn"
                       (click)="onReject(lesson.id)"
                       matTooltip="Reject"
+                      [data-testid]="'lesson-reject-' + lesson.id"
+                      aria-label="Reject lesson"
                     >
                       <mat-icon>close</mat-icon>
                     </button>
@@ -234,6 +293,8 @@
                       color="primary"
                       (click)="onComplete(lesson.id)"
                       matTooltip="Complete"
+                      [data-testid]="'lesson-complete-' + lesson.id"
+                      aria-label="Complete lesson"
                     >
                       <mat-icon>done_all</mat-icon>
                     </button>
@@ -242,6 +303,8 @@
                       color="warn"
                       (click)="onCancel(lesson.id)"
                       matTooltip="Cancel"
+                      [data-testid]="'lesson-cancel-' + lesson.id"
+                      aria-label="Cancel lesson"
                     >
                       <mat-icon>cancel</mat-icon>
                     </button>
@@ -251,6 +314,8 @@
                     color="warn"
                     (click)="onDelete(lesson.id)"
                     matTooltip="Delete"
+                    [data-testid]="'lesson-delete-' + lesson.id"
+                    aria-label="Delete lesson"
                   >
                     <mat-icon>delete</mat-icon>
                   </button>

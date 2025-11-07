@@ -1,21 +1,30 @@
-<h2 mat-dialog-title>
+<h2 mat-dialog-title data-testid="teacher-assignment-title">
   Manage Teachers for {{ data.student.firstName }} {{ data.student.lastName }}
 </h2>
 
-<mat-dialog-content>
+<mat-dialog-content data-testid="teacher-assignment-content">
   @if (isLoading()) {
     <app-loading-spinner message="Loading teachers..."></app-loading-spinner>
   } @else {
-    <div class="teachers-section">
-      <h3>Assigned Teachers ({{ assignedTeachers().length }})</h3>
+    <div class="teachers-section" data-testid="assigned-teachers-section">
+      <h3 data-testid="assigned-teachers-header">
+        Assigned Teachers ({{ assignedTeachers().length }})
+      </h3>
       @if (assignedTeachers().length === 0) {
-        <p class="empty-message">No teachers assigned yet</p>
+        <p class="empty-message" data-testid="assigned-teachers-empty">No teachers assigned yet</p>
       } @else {
-        <mat-chip-set>
+        <mat-chip-set data-testid="assigned-teachers-chips">
           @for (teacher of assignedTeachers(); track teacher.id) {
-            <mat-chip (removed)="onUnassignTeacher(teacher)">
+            <mat-chip
+              (removed)="onUnassignTeacher(teacher)"
+              [data-testid]="'assigned-teacher-chip-' + teacher.id"
+            >
               {{ getTeacherName(teacher) }}
-              <button matChipRemove>
+              <button
+                matChipRemove
+                [data-testid]="'unassign-teacher-' + teacher.id"
+                aria-label="Unassign teacher"
+              >
                 <mat-icon>cancel</mat-icon>
               </button>
             </mat-chip>
@@ -24,26 +33,37 @@
       }
     </div>
 
-    <div class="teachers-section">
-      <h3>
+    <div class="teachers-section" data-testid="recommended-teachers-section">
+      <h3 data-testid="recommended-teachers-header">
         Recommended Teachers - {{ data.student.instrument }} ({{
           matchingInstrumentTeachers().length
         }})
       </h3>
       @if (matchingInstrumentTeachers().length === 0) {
-        <p class="empty-message">No teachers available for {{ data.student.instrument }}</p>
+        <p class="empty-message" data-testid="recommended-teachers-empty">
+          No teachers available for {{ data.student.instrument }}
+        </p>
       } @else {
-        <mat-list>
+        <mat-list data-testid="recommended-teachers-list">
           @for (teacher of matchingInstrumentTeachers(); track teacher.id) {
-            <mat-list-item class="recommended-teacher">
+            <mat-list-item
+              class="recommended-teacher"
+              [data-testid]="'recommended-teacher-' + teacher.id"
+            >
               <mat-icon matListItemIcon class="recommended-icon">check_circle</mat-icon>
-              <span matListItemTitle>{{ getTeacherName(teacher) }}</span>
-              <span matListItemLine>{{ teacher.instrument }} - {{ teacher.experience }} years</span>
+              <span matListItemTitle [data-testid]="'recommended-teacher-name-' + teacher.id">
+                {{ getTeacherName(teacher) }}
+              </span>
+              <span matListItemLine [data-testid]="'recommended-teacher-info-' + teacher.id">
+                {{ teacher.instrument }} - {{ teacher.experience }} years
+              </span>
               <button
                 mat-icon-button
                 color="primary"
                 (click)="onAssignTeacher(teacher)"
                 matListItemMeta
+                [data-testid]="'assign-teacher-' + teacher.id"
+                aria-label="Assign teacher"
               >
                 <mat-icon>add</mat-icon>
               </button>
@@ -54,21 +74,29 @@
     </div>
 
     @if (otherInstrumentTeachers().length > 0) {
-      <div class="teachers-section other-teachers">
-        <h3>Other Teachers ({{ otherInstrumentTeachers().length }})</h3>
-        <p class="info-message">
+      <div class="teachers-section other-teachers" data-testid="other-teachers-section">
+        <h3 data-testid="other-teachers-header">
+          Other Teachers ({{ otherInstrumentTeachers().length }})
+        </h3>
+        <p class="info-message" data-testid="other-teachers-info">
           These teachers specialize in different instruments but can still be assigned
         </p>
-        <mat-list>
+        <mat-list data-testid="other-teachers-list">
           @for (teacher of otherInstrumentTeachers(); track teacher.id) {
-            <mat-list-item>
-              <span matListItemTitle>{{ getTeacherName(teacher) }}</span>
-              <span matListItemLine>{{ teacher.instrument }} - {{ teacher.experience }} years</span>
+            <mat-list-item [data-testid]="'other-teacher-' + teacher.id">
+              <span matListItemTitle [data-testid]="'other-teacher-name-' + teacher.id">
+                {{ getTeacherName(teacher) }}
+              </span>
+              <span matListItemLine [data-testid]="'other-teacher-info-' + teacher.id">
+                {{ teacher.instrument }} - {{ teacher.experience }} years
+              </span>
               <button
                 mat-icon-button
                 color="primary"
                 (click)="onAssignTeacher(teacher)"
                 matListItemMeta
+                [data-testid]="'assign-other-teacher-' + teacher.id"
+                aria-label="Assign teacher"
               >
                 <mat-icon>add</mat-icon>
               </button>
@@ -80,6 +108,14 @@
   }
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" (click)="onClose()">Done</button>
+<mat-dialog-actions align="end" data-testid="teacher-assignment-actions">
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onClose()"
+    data-testid="teacher-assignment-close"
+    aria-label="Close dialog"
+  >
+    Done
+  </button>
 </mat-dialog-actions>

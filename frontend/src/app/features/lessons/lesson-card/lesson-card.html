@@ -1,75 +1,109 @@
-<mat-card>
+<mat-card [attr.data-testid]="'lesson-card-' + lesson().id">
   <mat-card-header>
     <mat-card-title>
       <div class="lesson-title">
-        <div class="lesson-participants">
-          <div class="participant">
+        <div class="lesson-participants" data-testid="lesson-participants">
+          <div class="participant" data-testid="lesson-teacher">
             <mat-icon class="participant-icon teacher-icon">library_music</mat-icon>
             <div class="participant-info">
               <span class="participant-label">Teacher</span>
-              <span class="participant-name">{{ getTeacherName() }}</span>
+              <span class="participant-name" data-testid="lesson-teacher-name">{{ getTeacherName() }}</span>
             </div>
           </div>
           <mat-icon class="arrow-icon">arrow_forward</mat-icon>
-          <div class="participant">
+          <div class="participant" data-testid="lesson-student">
             <mat-icon class="participant-icon student-icon">groups</mat-icon>
             <div class="participant-info">
               <span class="participant-label">Student</span>
-              <span class="participant-name">{{ getStudentName() }}</span>
+              <span class="participant-name" data-testid="lesson-student-name">{{ getStudentName() }}</span>
             </div>
           </div>
         </div>
-        <div class="badges">
-          <mat-chip class="status-chip" [ngClass]="getStatusClass(lesson().status)">
+        <div class="badges" data-testid="lesson-badges">
+          <mat-chip
+            class="status-chip"
+            [ngClass]="getStatusClass(lesson().status)"
+            [data-testid]="'lesson-status-' + lesson().id"
+            [attr.aria-label]="'Lesson status: ' + lesson().status"
+          >
             {{ lesson().status }}
           </mat-chip>
         </div>
       </div>
     </mat-card-title>
-    <mat-card-subtitle>
+    <mat-card-subtitle data-testid="lesson-time">
       {{ lesson().startTime | date: 'medium' }}
     </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
-    <div class="lesson-details">
-      <div class="detail-item">
+    <div class="lesson-details" data-testid="lesson-details">
+      <div class="detail-item" data-testid="lesson-duration">
         <mat-icon>schedule</mat-icon>
         <span>{{ getDuration() }}</span>
       </div>
-      <div class="detail-item">
+      <div class="detail-item" data-testid="lesson-instrument">
         <mat-icon>music_note</mat-icon>
         <span>{{ lesson().teacher?.instrument || 'N/A' }}</span>
       </div>
     </div>
   </mat-card-content>
 
-  <mat-card-actions>
+  <mat-card-actions data-testid="lesson-actions">
     @if (canConfirm()) {
-      <button mat-button color="primary" (click)="onConfirm()">
+      <button
+        mat-button
+        color="primary"
+        (click)="onConfirm()"
+        data-testid="lesson-card-confirm"
+        aria-label="Confirm lesson"
+      >
         <mat-icon>check</mat-icon>
         Confirm
       </button>
     }
     @if (canReject()) {
-      <button mat-button color="warn" (click)="onReject()">
+      <button
+        mat-button
+        color="warn"
+        (click)="onReject()"
+        data-testid="lesson-card-reject"
+        aria-label="Reject lesson"
+      >
         <mat-icon>close</mat-icon>
         Reject
       </button>
     }
     @if (canComplete()) {
-      <button mat-button color="primary" (click)="onComplete()">
+      <button
+        mat-button
+        color="primary"
+        (click)="onComplete()"
+        data-testid="lesson-card-complete"
+        aria-label="Complete lesson"
+      >
         <mat-icon>done_all</mat-icon>
         Complete
       </button>
     }
     @if (canCancel()) {
-      <button mat-button (click)="onCancel()">
+      <button
+        mat-button
+        (click)="onCancel()"
+        data-testid="lesson-card-cancel"
+        aria-label="Cancel lesson"
+      >
         <mat-icon>cancel</mat-icon>
         Cancel
       </button>
     }
-    <button mat-icon-button color="warn" (click)="onDelete()">
+    <button
+      mat-icon-button
+      color="warn"
+      (click)="onDelete()"
+      data-testid="lesson-card-delete"
+      aria-label="Delete lesson"
+    >
       <mat-icon>delete</mat-icon>
     </button>
   </mat-card-actions>

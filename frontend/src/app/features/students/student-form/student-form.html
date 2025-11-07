@@ -1,6 +1,6 @@
-<mat-card>
+<mat-card [data-testid]="isEditMode() ? 'student-edit-card' : 'student-form-card'">
   <mat-card-header>
-    <mat-card-title>
+    <mat-card-title [data-testid]="isEditMode() ? 'student-edit-title' : 'student-form-title'">
       {{ isEditMode() ? 'Edit Student' : 'New Student' }}
     </mat-card-title>
   </mat-card-header>
@@ -9,30 +9,46 @@
     @if (isLoading()) {
       <app-loading-spinner message="Loading student..."></app-loading-spinner>
     } @else {
-      <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" data-testid="student-form">
         <div class="form-row">
-          <mat-form-field class="full-width">
+          <mat-form-field class="full-width" data-testid="form-first-name">
             <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstName" />
+            <input
+              matInput
+              formControlName="firstName"
+              data-testid="form-first-name-input"
+              aria-label="First name"
+            />
             @if (getErrorMessage('firstName')) {
-              <mat-error>{{ getErrorMessage('firstName') }}</mat-error>
+              <mat-error data-testid="form-first-name-error">{{ getErrorMessage('firstName') }}</mat-error>
             }
           </mat-form-field>
 
-          <mat-form-field class="full-width">
+          <mat-form-field class="full-width" data-testid="form-last-name">
             <mat-label>Last Name</mat-label>
-            <input matInput formControlName="lastName" />
+            <input
+              matInput
+              formControlName="lastName"
+              data-testid="form-last-name-input"
+              aria-label="Last name"
+            />
             @if (getErrorMessage('lastName')) {
-              <mat-error>{{ getErrorMessage('lastName') }}</mat-error>
+              <mat-error data-testid="form-last-name-error">{{ getErrorMessage('lastName') }}</mat-error>
             }
           </mat-form-field>
         </div>
 
-        <mat-form-field class="full-width">
+        <mat-form-field class="full-width" data-testid="form-password">
           <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" />
+          <input
+            matInput
+            type="password"
+            formControlName="password"
+            data-testid="form-password-input"
+            aria-label="Password"
+          />
           @if (getErrorMessage('password')) {
-            <mat-error>{{ getErrorMessage('password') }}</mat-error>
+            <mat-error data-testid="form-password-error">{{ getErrorMessage('password') }}</mat-error>
           }
           @if (!isEditMode()) {
             <mat-hint>8-64 chars: uppercase, lowercase, number. Special: @$!%*?&</mat-hint>
@@ -41,20 +57,33 @@
           }
         </mat-form-field>
 
-        <mat-form-field class="full-width">
+        <mat-form-field class="full-width" data-testid="form-instrument">
           <mat-label>Instrument</mat-label>
-          <mat-select formControlName="instrument">
+          <mat-select
+            formControlName="instrument"
+            data-testid="form-instrument-select"
+            aria-label="Select instrument"
+          >
             @for (instrument of instrumentOptions; track instrument) {
-              <mat-option [value]="instrument">{{ instrument }}</mat-option>
+              <mat-option [value]="instrument" [data-testid]="'instrument-option-' + instrument.toLowerCase()">
+                {{ instrument }}
+              </mat-option>
             }
           </mat-select>
           @if (getErrorMessage('instrument')) {
-            <mat-error>{{ getErrorMessage('instrument') }}</mat-error>
+            <mat-error data-testid="form-instrument-error">{{ getErrorMessage('instrument') }}</mat-error>
           }
         </mat-form-field>
 
-        <div class="form-actions">
-          <button mat-button type="button" (click)="onCancel()" [disabled]="isSaving()">
+        <div class="form-actions" data-testid="form-actions">
+          <button
+            mat-button
+            type="button"
+            (click)="onCancel()"
+            [disabled]="isSaving()"
+            data-testid="form-cancel-button"
+            aria-label="Cancel"
+          >
             Cancel
           </button>
           <button
@@ -62,6 +91,8 @@
             color="primary"
             type="submit"
             [disabled]="isSaving() || (isEditMode() && !hasChanges())"
+            [data-testid]="isEditMode() ? 'form-update-button' : 'form-submit-button'"
+            [attr.aria-label]="isEditMode() ? 'Update student' : 'Create student'"
           >
             {{ isSaving() ? 'Saving...' : isEditMode() ? 'Update' : 'Create' }}
           </button>

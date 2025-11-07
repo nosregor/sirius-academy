@@ -1,33 +1,56 @@
-<mat-toolbar color="primary" class="app-toolbar">
-  <button mat-icon-button (click)="drawer.toggle()" aria-label="Toggle sidenav">
+<mat-toolbar color="primary" class="app-toolbar" data-testid="app-toolbar">
+  <button
+    mat-icon-button
+    (click)="drawer.toggle()"
+    aria-label="Toggle sidenav"
+    data-testid="sidenav-toggle"
+  >
     <mat-icon>menu</mat-icon>
   </button>
-  <span class="app-title">Sirius Academy</span>
+  <span class="app-title" data-testid="app-title">Sirius Academy</span>
   <span class="spacer"></span>
-  <mat-icon>school</mat-icon>
+  <mat-icon data-testid="app-icon">school</mat-icon>
 </mat-toolbar>
 
-<mat-sidenav-container class="app-container">
-  <mat-sidenav #drawer class="app-sidenav" [attr.role]="'navigation'" mode="over">
-    <mat-nav-list>
-      <a mat-list-item routerLink="/teachers" routerLinkActive="active-link">
+<mat-sidenav-container class="app-container" data-testid="app-container">
+  <mat-sidenav #drawer class="app-sidenav" [attr.role]="'navigation'" mode="over" data-testid="app-sidenav">
+    <mat-nav-list data-testid="nav-list">
+      <a
+        mat-list-item
+        routerLink="/teachers"
+        routerLinkActive="active-link"
+        data-testid="nav-teachers"
+        aria-label="Navigate to Teachers"
+      >
         <mat-icon matListItemIcon>library_music</mat-icon>
         <span matListItemTitle>Teachers</span>
       </a>
 
-      <a mat-list-item routerLink="/students" routerLinkActive="active-link">
+      <a
+        mat-list-item
+        routerLink="/students"
+        routerLinkActive="active-link"
+        data-testid="nav-students"
+        aria-label="Navigate to Students"
+      >
         <mat-icon matListItemIcon>groups</mat-icon>
         <span matListItemTitle>Students</span>
       </a>
 
-      <a mat-list-item routerLink="/lessons" routerLinkActive="active-link">
+      <a
+        mat-list-item
+        routerLink="/lessons"
+        routerLinkActive="active-link"
+        data-testid="nav-lessons"
+        aria-label="Navigate to Lessons"
+      >
         <mat-icon matListItemIcon>event</mat-icon>
         <span matListItemTitle>Lessons</span>
       </a>
 
       <mat-divider></mat-divider>
 
-      <mat-list-item class="app-info">
+      <mat-list-item class="app-info" data-testid="app-version">
         <mat-icon matListItemIcon>info</mat-icon>
         <span matListItemTitle>Version 1.0.0</span>
       </mat-list-item>
@@ -35,7 +58,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <div class="content-container">
+    <div class="content-container" data-testid="app-content">
       <router-outlet />
     </div>
   </mat-sidenav-content>
