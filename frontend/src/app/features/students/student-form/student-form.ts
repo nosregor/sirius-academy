@@ -37,6 +37,7 @@ export class StudentForm implements OnInit {
   isLoading = signal<boolean>(false);
   isSaving = signal<boolean>(false);
   studentId: string | null = null;
+  private originalValues: Record<string, any> | null = null;
 
   readonly instrumentOptions = ['Piano', 'Guitar', 'Bass', 'Drums', 'Voice', 'Ukulele'];
 
@@ -76,11 +77,18 @@ export class StudentForm implements OnInit {
     this.isLoading.set(true);
     this.studentsService.getStudentById(id).subscribe({
       next: (student) => {
-        this.studentForm.patchValue({
+        const formData = {
           firstName: student.firstName,
           lastName: student.lastName,
           instrument: student.instrument,
-        });
+          password: '',
+        };
+        this.originalValues = {
+          firstName: student.firstName,
+          lastName: student.lastName,
+          instrument: student.instrument,
+        };
+        this.studentForm.patchValue(formData);
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -94,9 +102,28 @@ export class StudentForm implements OnInit {
     });
   }
 
+  hasChanges(): boolean {
+    if (!this.isEditMode() || !this.originalValues) {
+      return true;
+    }
+
+    const currentValue = {
+      firstName: this.studentForm.value.firstName,
+      lastName: this.studentForm.value.lastName,
+      instrument: this.studentForm.value.instrument,
+    };
+
+    return JSON.stringify(currentValue) !== JSON.stringify(this.originalValues);
+  }
+
   onSubmit(): void {
     if (this.studentForm.invalid) {
       this.studentForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.isEditMode() && !this.hasChanges()) {
+      this.snackBar.open('No changes detected', 'Close', { duration: 2000 });
       return;
     }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -37,6 +37,7 @@ export class TeacherForm implements OnInit {
   isLoading = signal<boolean>(false);
   isSaving = signal<boolean>(false);
   teacherId: string | null = null;
+  private originalValues: Record<string, any> | null = null;
 
   readonly instrumentOptions = ['Piano', 'Guitar', 'Bass', 'Drums', 'Voice', 'Ukulele'];
 
@@ -77,12 +78,15 @@ export class TeacherForm implements OnInit {
     this.isLoading.set(true);
     this.teachersService.getTeacherById(id).subscribe({
       next: (teacher) => {
-        this.teacherForm.patchValue({
+        const formData = {
           firstName: teacher.firstName,
           lastName: teacher.lastName,
           instrument: teacher.instrument,
           experience: teacher.experience,
-        });
+          password: '',
+        };
+        this.originalValues = { ...formData };
+        this.teacherForm.patchValue(formData);
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -96,9 +100,30 @@ export class TeacherForm implements OnInit {
     });
   }
 
+  hasChanges = computed(() => {
+    if (!this.isEditMode() || !this.originalValues) {
+      return true;
+    }
+
+    const currentValue = { ...this.teacherForm.value };
+    if (!currentValue.password) {
+      delete currentValue.password;
+    }
+
+    const original = { ...this.originalValues };
+    delete original['password'];
+
+    return JSON.stringify(currentValue) !== JSON.stringify(original);
+  });
+
   onSubmit(): void {
     if (this.teacherForm.invalid) {
       this.teacherForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.isEditMode() && !this.hasChanges()) {
+      this.snackBar.open('No changes detected', 'Close', { duration: 2000 });
       return;
     }
 

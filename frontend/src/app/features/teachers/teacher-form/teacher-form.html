@@ -67,7 +67,12 @@
           <button mat-button type="button" (click)="onCancel()" [disabled]="isSaving()">
             Cancel
           </button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="isSaving()">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="isSaving() || (isEditMode() && !hasChanges())"
+          >
             {{ isSaving() ? 'Saving...' : isEditMode() ? 'Update' : 'Create' }}
           </button>
         </div>

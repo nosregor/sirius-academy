@@ -74,30 +74,62 @@ export class TeacherAssignment implements OnInit {
   }
 
   onAssignTeacher(teacher: Teacher): void {
+    // Optimistic update - update UI immediately
+    this.assignedTeachers.update((teachers) => [...teachers, teacher]);
+    this.availableTeachers.update((teachers) => teachers.filter((t) => t.id !== teacher.id));
+    this.matchingInstrumentTeachers.update((teachers) =>
+      teachers.filter((t) => t.id !== teacher.id),
+    );
+    this.otherInstrumentTeachers.update((teachers) => teachers.filter((t) => t.id !== teacher.id));
+
     this.studentsService.assignTeacher(this.data.student.id, teacher.id).subscribe({
       next: () => {
         this.snackBar.open(`${teacher.firstName} ${teacher.lastName} assigned`, 'Close', {
           duration: 2000,
         });
-        this.loadTeachers();
       },
       error: (error) => {
         console.error('Error assigning teacher:', error);
+        // Revert optimistic update on error
+        this.assignedTeachers.update((teachers) => teachers.filter((t) => t.id !== teacher.id));
+        this.availableTeachers.update((teachers) => [...teachers, teacher]);
+        if (teacher.instrument === this.data.student.instrument) {
+          this.matchingInstrumentTeachers.update((teachers) => [...teachers, teacher]);
+        } else {
+          this.otherInstrumentTeachers.update((teachers) => [...teachers, teacher]);
+        }
         this.snackBar.open('Failed to assign teacher', 'Close', { duration: 3000 });
       },
     });
   }
 
   onUnassignTeacher(teacher: Teacher): void {
+    // Optimistic update - update UI immediately
+    this.assignedTeachers.update((teachers) => teachers.filter((t) => t.id !== teacher.id));
+    this.availableTeachers.update((teachers) => [...teachers, teacher]);
+    if (teacher.instrument === this.data.student.instrument) {
+      this.matchingInstrumentTeachers.update((teachers) => [...teachers, teacher]);
+    } else {
+      this.otherInstrumentTeachers.update((teachers) => [...teachers, teacher]);
+    }
+
     this.studentsService.unassignTeacher(this.data.student.id, teacher.id).subscribe({
       next: () => {
         this.snackBar.open(`${teacher.firstName} ${teacher.lastName} unassigned`, 'Close', {
           duration: 2000,
         });
-        this.loadTeachers();
       },
       error: (error) => {
         console.error('Error unassigning teacher:', error);
+        // Revert optimistic update on error
+        this.assignedTeachers.update((teachers) => [...teachers, teacher]);
+        this.availableTeachers.update((teachers) => teachers.filter((t) => t.id !== teacher.id));
+        this.matchingInstrumentTeachers.update((teachers) =>
+          teachers.filter((t) => t.id !== teacher.id),
+        );
+        this.otherInstrumentTeachers.update((teachers) =>
+          teachers.filter((t) => t.id !== teacher.id),
+        );
         this.snackBar.open('Failed to unassign teacher', 'Close', { duration: 3000 });
       },
     });
