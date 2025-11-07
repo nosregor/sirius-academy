@@ -81,6 +81,11 @@ mat-card {
           gap: 8px;
           align-items: center;
           flex-wrap: wrap;
+
+          @media (max-width: 480px) {
+            width: 100%;
+            justify-content: flex-start;
+          }
         }
 
         .status-chip {
@@ -154,10 +159,23 @@ mat-card {
     padding: 8px 16px;
     border-top: 1px solid rgba(0, 0, 0, 0.12);
     margin: 0;
+    flex-wrap: wrap;
+
+    @media (max-width: 480px) {
+      padding: 8px;
+      gap: 4px;
+    }
 
     button {
       mat-icon {
         margin-right: 4px;
+      }
+
+      @media (max-width: 480px) {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        font-size: 12px;
+        padding: 8px 4px;
       }
     }
   }

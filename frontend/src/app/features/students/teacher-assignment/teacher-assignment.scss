@@ -1,6 +1,11 @@
 mat-dialog-content {
   min-height: 400px;
   padding: 20px 0;
+
+  @media (max-width: 768px) {
+    min-height: 300px;
+    padding: 16px 0;
+  }
 }
 
 .teachers-section {

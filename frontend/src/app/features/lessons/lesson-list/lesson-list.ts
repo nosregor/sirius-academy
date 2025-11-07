@@ -344,8 +344,10 @@ export class LessonList implements OnInit {
       cancelText: 'Cancel',
     };
 
+    const isMobile = window.innerWidth <= 768;
     const dialogRef = this.dialog.open(ConfirmDialog, {
-      width: '400px',
+      width: isMobile ? '90vw' : '400px',
+      maxWidth: isMobile ? '90vw' : '400px',
       data: dialogData,
     });
 

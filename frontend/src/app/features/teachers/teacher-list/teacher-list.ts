@@ -80,8 +80,10 @@ export class TeacherList implements OnInit {
           students,
         };
 
+        const isMobile = window.innerWidth <= 768;
         this.dialog.open(TeacherStudentsDialog, {
-          width: '600px',
+          width: isMobile ? '100vw' : '600px',
+          maxWidth: isMobile ? '100vw' : '600px',
           data: dialogData,
         });
       },
@@ -102,8 +104,10 @@ export class TeacherList implements OnInit {
       cancelText: 'Cancel',
     };
 
+    const isMobile = window.innerWidth <= 768;
     const dialogRef = this.dialog.open(ConfirmDialog, {
-      width: '400px',
+      width: isMobile ? '90vw' : '400px',
+      maxWidth: isMobile ? '90vw' : '400px',
       data: dialogData,
     });
 

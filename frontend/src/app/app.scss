@@ -37,12 +37,32 @@
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
+@media (max-width: 960px) {
   .app-sidenav {
-    width: 200px;
+    width: 250px;
   }
 
   .content-container {
     padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-title {
+    font-size: 18px;
+  }
+
+  .content-container {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 16px;
+  }
+
+  .content-container {
+    padding: 8px;
   }
 }

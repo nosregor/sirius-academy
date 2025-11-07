@@ -41,9 +41,17 @@ form {
     gap: 8px;
     flex: 1;
 
+    @media (max-width: 600px) {
+      width: 100%;
+    }
+
     .time-picker-field {
       flex: 1;
       min-width: 120px;
+
+      @media (max-width: 600px) {
+        min-width: 100px;
+      }
     }
 
     .time-separator {
@@ -51,6 +59,21 @@ form {
       font-weight: 500;
       color: rgba(0, 0, 0, 0.6);
       margin-top: 8px;
+
+      @media (max-width: 600px) {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .form-actions {
+    @media (max-width: 600px) {
+      flex-direction: column-reverse;
+      width: 100%;
+
+      button {
+        width: 100%;
+      }
     }
   }
 

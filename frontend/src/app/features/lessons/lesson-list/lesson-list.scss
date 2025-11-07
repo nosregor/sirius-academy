@@ -4,6 +4,7 @@ mat-card-header {
   gap: 16px;
   padding: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  flex-wrap: wrap;
 
   mat-card-title {
     margin: 0;
@@ -16,6 +17,16 @@ mat-card-header {
   .view-toggle {
     mat-icon {
       margin-right: 4px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    gap: 8px;
+
+    button {
+      min-width: auto;
+      padding: 0 12px;
     }
   }
 }
@@ -31,6 +42,16 @@ mat-card-content {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 
   .stat-card {
     display: flex;
@@ -129,6 +150,16 @@ mat-card-content {
     flex: 1;
     min-width: 200px;
   }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 8px;
+
+    mat-form-field {
+      min-width: 100%;
+      width: 100%;
+    }
+  }
 }
 
 .lessons-container {
@@ -198,9 +229,11 @@ mat-card-content {
 .table-container {
   margin-top: 24px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 
   .lessons-table {
     width: 100%;
+    min-width: 600px;
 
     th {
       font-weight: 600;
@@ -210,6 +243,15 @@ mat-card-content {
     td,
     th {
       padding: 16px;
+
+      @media (max-width: 768px) {
+        padding: 12px 8px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      min-width: 800px;
     }
 
     .status-badge {
@@ -243,15 +285,27 @@ mat-card-content {
     .action-buttons {
       display: flex;
       gap: 4px;
+      flex-wrap: wrap;
 
       button {
         width: 36px;
         height: 36px;
 
+        @media (max-width: 768px) {
+          width: 32px;
+          height: 32px;
+        }
+
         mat-icon {
           font-size: 20px;
           width: 20px;
           height: 20px;
+
+          @media (max-width: 768px) {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
         }
       }
     }
